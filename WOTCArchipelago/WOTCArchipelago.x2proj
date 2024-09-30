@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>d55b3e84-61c8-442e-b51d-140634137e75</Guid>
+    <Name>WOTCArchipelago</Name>
+    <Description>Archipelago mod for WOTC.</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>WOTCArchipelago</AssemblyName>
+    <RootNamespace>WOTCArchipelago</RootNamespace>
+    <ProjectGuid>{d5ed4ef6-0b24-471d-90d1-ec8815f999a7}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Config\Base\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Src\" />
+    <Folder Include="Content\" />
+    <Folder Include="ContentForCook\" />
+    <Folder Include="Src\WOTCArchipelago\" />
+    <Folder Include="Src\WOTCArchipelago\Classes\" />
+    <Folder Include="Src\ModConfigMenuAPI" />
+    <Folder Include="Src\ModConfigMenuAPI\Classes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\XComGameData.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\XComWOTCArchipelago_Defaults.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ReadMe.txt" />
+    <Content Include="ModPreview.jpg" />
+    <Content Include="ContentOptions.json" />
+    <Content Include="Config\Base\XComEditor.ini" />
+    <Content Include="Config\Base\XComEngine.ini" />
+    <Content Include="Config\Base\XComGame.ini" />
+    <Content Include="Config\XComTemplateCreator.ini" />
+    <Content Include="Config\XComTemplateEditor.ini" />
+    <Content Include="Localization\XComGame.int" />
+    <Content Include="Localization\WOTCArchipelago.int" />
+    <Content Include="Src\extra_globals.uci" />
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_MCMListener.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\X2EventListener_WOTCArchipelago.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_APClient.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_TcpLink.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\X2CompletionItemTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\X2Item_ResearchCompleted.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\X2DLCInfo_WOTCArchipelago.uc" />
+    <Content Include="Src\WOTCArchipelago\Classes\Help.uc" />
+    <Content Include="Src\WOTCArchipelago\Classes\ConfigEngine.uc" />
+    <Content Include="Src\WOTCArchipelago\Classes\X2StrategyElement_OverrideMissionSources.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Button.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Checkbox.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Dropdown.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Instance.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Label.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Setting.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_SettingsGroup.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_SettingsPage.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Slider.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Spinner.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\MCM_API_Includes.uci">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <PropertyGroup>
+    <SolutionRoot>$(MSBuildProjectDirectory)\..\</SolutionRoot>
+    <ScriptsDir>$(SolutionRoot).scripts\\</ScriptsDir>
+    <BuildCommonRoot>$(ScriptsDir)X2ModBuildCommon\</BuildCommonRoot>
+  </PropertyGroup>
+  <Import Project="$(BuildCommonRoot)XCOM2.targets" />
+</Project>

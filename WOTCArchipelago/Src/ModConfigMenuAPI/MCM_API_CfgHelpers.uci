@@ -1,0 +1,33 @@
+// Contains helper functions for doing proper user-configurable save data. See documentation for patterns on how to do it.
+
+`define MCM_CH_VersionChecker(SrcVer, TrgVer)\
+	static function bool MCM_CH_IMPL_VersionChecker()\
+	{\
+		return (`{TrgVer} < `{SrcVer});\
+	}\
+	static function int MCM_CH_IMPL_VersionMax()\
+	{\
+		return (MCM_CH_IMPL_VersionChecker() ? (`{SrcVer}) : (`{TrgVer}));\
+	}
+
+`define MCM_CH_GetValue(SrcVal, TrgVal)\
+	((MCM_CH_IMPL_VersionChecker()) ? (`{SrcVal}) : (`{TrgVal}))
+
+`define MCM_CH_GetCompositeVersion()\
+	MCM_CH_IMPL_VersionMax()
+
+
+// Own additions
+
+`define MCM_DEFAULT class'WOTCArchipelago_Defaults'.default.DEF_
+`define MCM_CONFIG class'WOTCArchipelago_MCMListener'.default.CFG_
+
+`define MCM_API_VersionChecker(VER) `MCM_CH_VersionChecker(`{MCM_DEFAULT}`{VER}, `{MCM_CONFIG}`{VER})
+
+`define MCM_API_Getter(VAR, TYPE) static function `{TYPE} get`{VAR} () { return `MCM_CH_GetValue(`{MCM_DEFAULT}`{VAR}, `{MCM_CONFIG}`{VAR}); }
+
+`define MCM_API_CheckboxFns(VAR) `MCM_API_BasicCheckboxSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, bool)
+`define MCM_API_SliderFns(VAR) `MCM_API_BasicSliderSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, int)
+
+`define MCM_API_AddCheckbox(GROUP, VAR, LABEL, DESC) `{GROUP}.AddCheckbox('`{VAR}', `{LABEL}, `{DESC}, CFG_`{VAR}, `{VAR}_SaveHandler)
+`define MCM_API_AddSlider(GROUP, VAR, LABEL, DESC, MIN, MAX, STEP) `{GROUP}.AddSlider('`{VAR}', `{LABEL}, `{DESC}, `MIN, `MAX, `STEP, CFG_`{VAR}, `{VAR}_SaveHandler)
