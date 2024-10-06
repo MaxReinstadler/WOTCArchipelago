@@ -79,7 +79,8 @@ private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespo
 
 function Update()
 {
-	local WOTCArchipelago_TcpLink Link;
+	local WOTCArchipelago_TcpLink	Link;
+	local XComGameState				NewGameState;
 
 	// Handle custom popup
 	if (bShowCustomPopup)
@@ -92,6 +93,11 @@ function Update()
 	SinceLastTick++;
 	if (SinceLastTick < 20) return;
 	SinceLastTick = 0;
+
+	// HACK: Periodically trigger ResearchCompleted event to fix sequence broken objectives
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("HACK: Trigger ResearchCompleted for sequence breaks");
+	`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState);
+	`GAMERULES.SubmitGameState(NewGameState);
 	
 	// Strategy
 	if (`HQPRES != none)
