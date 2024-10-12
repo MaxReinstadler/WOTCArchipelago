@@ -94,9 +94,11 @@ function Update()
 	if (SinceLastTick < 20) return;
 	SinceLastTick = 0;
 
-	// HACK: Periodically trigger ResearchCompleted event to fix sequence broken objectives
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("HACK: Trigger ResearchCompleted for sequence breaks");
+	// HACK: Periodically trigger events to fix sequence broken objectives
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("HACK: Trigger events for sequence breaks");
 	`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState);
+	`XEVENTMGR.TriggerEvent('FacilityConstructionCompleted', , , NewGameState); // Proving Grounds, Shadow Chamber
+	`XEVENTMGR.TriggerEvent('ItemConstructionCompleted', , , NewGameState); // Skulljack
 	`GAMERULES.SubmitGameState(NewGameState);
 	
 	// Strategy
