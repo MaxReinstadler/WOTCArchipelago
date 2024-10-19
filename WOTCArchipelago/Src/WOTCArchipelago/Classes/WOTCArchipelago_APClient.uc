@@ -7,10 +7,9 @@ var string CustomPopupText;
 
 var private int SinceLastTick;
 
-var private int ItemsReceivedStrategy;
-var private int ItemsReceivedTactical;
-
 var private string TechCompletedType;
+var private string ResourceType;
+var private string WeaponModType;
 
 static function WOTCArchipelago_APClient GetAPClient()
 {
@@ -40,15 +39,15 @@ private function Initialize()
 
 	SinceLastTick = 0;
 
-	ItemsReceivedStrategy = 0;
-	ItemsReceivedTactical = 0;
-
 	TechCompletedType = "[TechCompleted]";
+	ResourceType = "[Resource]";
+	WeaponModType = "[WeaponMod]";
 }
 
 // CheckName depends on the type of check
 //
-// Research/Shadow Chamber Projects: TechTemplate.DataName
+// Research/Shadow Chamber Projects:	TechTemplate.DataName
+// Enemy Kills:							'Kill' + CharTemplate.CharacterGroupName
 function OnCheckReached(XComGameState NewGameState, name CheckName)
 {
 	local WOTCArchipelago_TcpLink Link;
@@ -105,13 +104,13 @@ function Update()
 	if (`HQPRES != none)
 	{
 		Link = Spawn(class'WOTCArchipelago_TcpLink');
-		Link.Call("/Tick/Strategy/" $ String(ItemsReceivedStrategy), TickStrategyResponseHandler, TickErrorHandler);
+		Link.Call("/Tick/Strategy/" $ ReadCounter('ItemsReceivedStrategy'), TickStrategyResponseHandler, TickErrorHandler);
 	}
 	// Tactical
 	else
 	{
 		Link = Spawn(class'WOTCArchipelago_TcpLink');
-		Link.Call("/Tick/Tactical/" $ String(ItemsReceivedTactical), TickTacticalResponseHandler, TickErrorHandler);
+		Link.Call("/Tick/Tactical/" $ ReadCounter('ItemsReceivedTactical'), TickTacticalResponseHandler, TickErrorHandler);
 	}
 }
 
@@ -129,7 +128,7 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 		
 		HandleMessage(Message);
 
-		ItemsReceivedStrategy++;
+		IncrementCounter('ItemsReceivedStrategy');
 	}
 }
 
@@ -147,7 +146,7 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 		
 		HandleMessage(Message);
 
-		ItemsReceivedTactical++;
+		IncrementCounter('ItemsReceivedTactical');
 	}
 }
 
@@ -159,8 +158,9 @@ private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespon
 private final function HandleMessage(string Message)
 {
 	local array<string>		Lines;
+	local array<string>		ResourceData;
 	local name				TemplateName;
-	local bool				AddedItem;
+	local int				Quantity;
 
 	local XComGameState		NewGameState;
 
@@ -171,47 +171,91 @@ private final function HandleMessage(string Message)
 	{
 		TemplateName = name(Mid(Lines[0], Len(TechCompletedType)));
 
-		// Add CompletionItem to HQ inventory
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding TechCompleted item to HQ Inventory");
-		AddedItem = AddItemToHQInventory(NewGameState, TemplateName, true);
-
-		// Trigger ResearchCompleted event
-		`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState);
-
+		AddItemToHQInventory(NewGameState, TemplateName);
+		`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState); // Trigger ResearchCompleted event
 		`GAMERULES.SubmitGameState(NewGameState);
+	}
+	// Resource
+	else if (Left(Lines[0], Len(ResourceType)) == ResourceType)
+	{
+		ResourceData = SplitString(Mid(Lines[0], Len(ResourceType)), ":");
+		TemplateName = name(ResourceData[0]);
+		Quantity = int(ResourceData[1]);
 
-		// Raise ItemReceived dialogue if item was added
-		if (AddedItem) RaiseDialog(Lines[1], Lines[2]);
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding resource item to HQ Inventory");
+		AddItemToHQInventory(NewGameState, TemplateName, Quantity);
+		`GAMERULES.SubmitGameState(NewGameState);
+	}
+	// WeaponMod
+	else if (Left(Lines[0], Len(WeaponModType)) == WeaponModType)
+	{
+		TemplateName = name(Mid(Lines[0], Len(WeaponModType)));
+
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding weapon mod item to HQ Inventory");
+		AddItemToHQInventory(NewGameState, TemplateName);
+		`GAMERULES.SubmitGameState(NewGameState);
 	}
 	else
 	{
-		// No item received
+		// No item received, raise arbitrary dialogue and exit
 		RaiseDialog(Lines[0], Lines[1]);
+		return;
 	}
+
+	// If item was received, raise ItemReceived dialogue
+	RaiseDialog(Lines[1], Lines[2]);
 }
 
-static private final function bool AddItemToHQInventory(XComGameState NewGameState, const name TemplateName, bool IsUnique=false)
+static private final function AddItemToHQInventory(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
 {
     local XComGameState_HeadquartersXCom	XComHQ;
 	local X2ItemTemplateManager             ItemMgr;
 	local X2ItemTemplate					ItemTemplate;
     local XComGameState_Item				ItemState;
-
-	// Drop unique items if already present
-	if (IsUnique && `XCOMHQ.HasItemByName(TemplateName)) return false;
 	
     XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
 
 	// Create ItemState
 	ItemMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	ItemTemplate = ItemMgr.FindItemTemplate(TemplateName);
-    ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);   
+    ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+	ItemState.Quantity = Quantity;
 	
 	// Add item to inventory
     XComHQ.PutItemInInventory(NewGameState, ItemState);
-	`AMLOG("Added item to HQ inventory: " $ TemplateName);
+	`AMLOG("Added item to HQ inventory: " $ TemplateName $ " x" $ Quantity);
+}
 
-	return true;
+static private final function int GetItemQuantityInHQInventory(XComGameState NewGameState, const name TemplateName)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+
+	return XComHQ.GetNumItemInInventory(TemplateName);
+}
+
+static private function IncrementCounter(const name CounterName)
+{
+	local XComGameState NewGameState;
+
+	// Increase ItemsReceivedTactical counter
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding counter item to HQ Inventory");
+	AddItemToHQInventory(NewGameState, CounterName);
+	`GAMERULES.SubmitGameState(NewGameState);
+}
+
+static private function int ReadCounter(const name CounterName)
+{
+	local XComGameState		NewGameState;
+	local int				CounterValue;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Reading counter item quantity from HQ Inventory");
+	CounterValue = GetItemQuantityInHQInventory(NewGameState, CounterName);
+	`GAMERULES.SubmitGameState(NewGameState);
+
+	return CounterValue;
 }
 
 static private final function RaiseDialog(string Title, string Text)

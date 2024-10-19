@@ -57,6 +57,9 @@
     <Content Include="Src\WOTCArchipelago\Classes\X2CompletionItemTemplate.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\X2Item_APCounterResources.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTCArchipelago\Classes\X2Item_ResearchCompleted.uc">
       <SubType>Content</SubType>
     </Content>
