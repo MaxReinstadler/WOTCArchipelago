@@ -2,6 +2,8 @@
 `define ERROR(msg) `LOG("ERROR :: [" $ GetFuncName() $ "] " $ `msg, , 'WOTCArchipelago')
 
 `define APCLIENT class'WOTCArchipelago_APClient'.static.GetAPClient()
+`define APCTRINC(Ctr) class'WOTCArchipelago_APClient'.static.IncrementCounter(`Ctr)
+`define APCTRREAD(Ctr) class'WOTCArchipelago_APClient'.static.ReadCounter(`Ctr)
 `define APCFG(Var) class'WOTCArchipelago_MCMListener'.static.get`{Var} ()
 
 `define CAPS(VarName) class'UIUtilities_Text'.static.CapsCheckForGermanScharfesS(`VarName)

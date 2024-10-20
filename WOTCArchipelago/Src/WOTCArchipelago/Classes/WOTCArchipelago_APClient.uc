@@ -104,13 +104,13 @@ function Update()
 	if (`HQPRES != none)
 	{
 		Link = Spawn(class'WOTCArchipelago_TcpLink');
-		Link.Call("/Tick/Strategy/" $ ReadCounter('ItemsReceivedStrategy'), TickStrategyResponseHandler, TickErrorHandler);
+		Link.Call("/Tick/Strategy/" $ `APCTRREAD('ItemsReceivedStrategy'), TickStrategyResponseHandler, TickErrorHandler);
 	}
 	// Tactical
 	else
 	{
 		Link = Spawn(class'WOTCArchipelago_TcpLink');
-		Link.Call("/Tick/Tactical/" $ ReadCounter('ItemsReceivedTactical'), TickTacticalResponseHandler, TickErrorHandler);
+		Link.Call("/Tick/Tactical/" $ `APCTRREAD('ItemsReceivedTactical'), TickTacticalResponseHandler, TickErrorHandler);
 	}
 }
 
@@ -128,7 +128,7 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 		
 		HandleMessage(Message);
 
-		IncrementCounter('ItemsReceivedStrategy');
+		`APCTRINC('ItemsReceivedStrategy');
 	}
 }
 
@@ -146,7 +146,7 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 		
 		HandleMessage(Message);
 
-		IncrementCounter('ItemsReceivedTactical');
+		`APCTRINC('ItemsReceivedTactical');
 	}
 }
 
@@ -236,7 +236,7 @@ static private final function int GetItemQuantityInHQInventory(XComGameState New
 	return XComHQ.GetNumItemInInventory(TemplateName);
 }
 
-static private function IncrementCounter(const name CounterName)
+static function IncrementCounter(const name CounterName)
 {
 	local XComGameState NewGameState;
 
@@ -246,7 +246,7 @@ static private function IncrementCounter(const name CounterName)
 	`GAMERULES.SubmitGameState(NewGameState);
 }
 
-static private function int ReadCounter(const name CounterName)
+static function int ReadCounter(const name CounterName)
 {
 	local XComGameState		NewGameState;
 	local int				CounterValue;
