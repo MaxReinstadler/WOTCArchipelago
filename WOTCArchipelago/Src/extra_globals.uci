@@ -3,6 +3,7 @@
 
 `define APCLIENT class'WOTCArchipelago_APClient'.static.GetAPClient()
 `define APCTRINC(Ctr) class'WOTCArchipelago_APClient'.static.IncrementCounter(`Ctr)
+`define APCTRDEC(Ctr) class'WOTCArchipelago_APClient'.static.DecrementCounter(`Ctr)
 `define APCTRREAD(Ctr) class'WOTCArchipelago_APClient'.static.ReadCounter(`Ctr)
 `define APCFG(Var) class'WOTCArchipelago_MCMListener'.static.get`{Var} ()
 

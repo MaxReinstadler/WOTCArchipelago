@@ -78,8 +78,7 @@ private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespo
 
 function Update()
 {
-	local WOTCArchipelago_TcpLink	Link;
-	local XComGameState				NewGameState;
+	local WOTCArchipelago_TcpLink Link;
 
 	// Handle custom popup
 	if (bShowCustomPopup)
@@ -93,12 +92,8 @@ function Update()
 	if (SinceLastTick < 20) return;
 	SinceLastTick = 0;
 
-	// HACK: Periodically trigger events to fix sequence broken objectives
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("HACK: Trigger events for sequence breaks");
-	`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState);
-	`XEVENTMGR.TriggerEvent('FacilityConstructionCompleted', , , NewGameState); // Proving Grounds, Shadow Chamber
-	`XEVENTMGR.TriggerEvent('ItemConstructionCompleted', , , NewGameState); // Skulljack
-	`GAMERULES.SubmitGameState(NewGameState);
+	// Handle objective completion
+	HandleObjectiveCompletion();
 	
 	// Strategy
 	if (`HQPRES != none)
@@ -112,6 +107,31 @@ function Update()
 		Link = Spawn(class'WOTCArchipelago_TcpLink');
 		Link.Call("/Tick/Tactical/" $ `APCTRREAD('ItemsReceivedTactical'), TickTacticalResponseHandler, TickErrorHandler);
 	}
+}
+
+static final function HandleObjectiveCompletion()
+{
+	local XComGameState						NewGameState;
+	local XComGameState_HeadquartersXCom	XComHQ;
+
+	XComHQ = `XCOMHQ;
+
+	// Add story objective completed counters to HQ inventory
+	if (!`APCFG(REQ_PSI_GATE_OBJ) || XComHQ.IsObjectiveCompleted('T4_M2_ConstructPsiGate')) `APCTRINC('PsiGateObjectiveCompleted');
+	if (!`APCFG(REQ_STASIS_SUIT_OBJ) || XComHQ.IsObjectiveCompleted('T2_M4_BuildStasisSuit')) `APCTRINC('StasisSuitObjectiveCompleted');
+	if (!`APCFG(REQ_AVATAR_CORPSE_OBJ) || XComHQ.IsObjectiveCompleted('T1_M6_S0_RecoverAvatarCorpse')) `APCTRINC('AvatarCorpseObjectiveCompleted');
+
+	// HACK: Periodically trigger events to fix sequence broken objectives
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("HACK: Trigger events for sequence breaks");
+	`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState);
+	`XEVENTMGR.TriggerEvent('FacilityConstructionCompleted', , , NewGameState); // Proving Grounds, Shadow Chamber
+	`XEVENTMGR.TriggerEvent('ItemConstructionCompleted', , , NewGameState); // Skulljack
+	`GAMERULES.SubmitGameState(NewGameState);
+
+	// Remove story objective completed counters from HQ inventory
+	`APCTRDEC('PsiGateObjectiveCompleted');
+	`APCTRDEC('StasisSuitObjectiveCompleted');
+	`APCTRDEC('AvatarCorpseObjectiveCompleted');
 }
 
 private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
@@ -224,7 +244,33 @@ static private final function AddItemToHQInventory(XComGameState NewGameState, c
 	
 	// Add item to inventory
     XComHQ.PutItemInInventory(NewGameState, ItemState);
+
+	// Do not print to log for story objective completion resource items
+	if (TemplateName == 'PsiGateObjectiveCompleted') return;
+	if (TemplateName == 'StasisSuitObjectiveCompleted') return;
+	if (TemplateName == 'AvatarCorpseObjectiveCompleted') return;
 	`AMLOG("Added item to HQ inventory: " $ TemplateName $ " x" $ Quantity);
+}
+
+static private final function RemoveItemFromHQInventory(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
+{
+	local XComGameState_HeadquartersXCom	XComHQ;
+	local XComGameState_Item				ItemState;
+
+	// Retrieve ItemState
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	ItemState = XComHQ.GetItemByName(TemplateName);
+
+	if (ItemState == none) return;
+
+	// Remove item from inventory
+	XComHQ.RemoveItemFromInventory(NewGameState, ItemState.GetReference(), Quantity);
+
+	// Do not print to log for story objective completion resource items
+	if (TemplateName == 'PsiGateObjectiveCompleted') return;
+	if (TemplateName == 'StasisSuitObjectiveCompleted') return;
+	if (TemplateName == 'AvatarCorpseObjectiveCompleted') return;
+	`AMLOG("Removed item from HQ inventory: " $ TemplateName $ " x" $ Quantity);
 }
 
 static private final function int GetItemQuantityInHQInventory(XComGameState NewGameState, const name TemplateName)
@@ -240,9 +286,17 @@ static function IncrementCounter(const name CounterName)
 {
 	local XComGameState NewGameState;
 
-	// Increase ItemsReceivedTactical counter
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding counter item to HQ Inventory");
 	AddItemToHQInventory(NewGameState, CounterName);
+	`GAMERULES.SubmitGameState(NewGameState);
+}
+
+static function DecrementCounter(const name CounterName)
+{
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Removing counter item from HQ Inventory");
+	RemoveItemFromHQInventory(NewGameState, CounterName);
 	`GAMERULES.SubmitGameState(NewGameState);
 }
 

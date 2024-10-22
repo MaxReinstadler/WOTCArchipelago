@@ -166,6 +166,15 @@ static private function PatchStrategyElementTemplates(X2DataTemplate DataTemplat
 	{
 		ObjectiveTemplate = X2ObjectiveTemplate(DataTemplate);
 		Requirements = ObjectiveTemplate.CompletionRequirements;
+
+		// Alter Avatar Autopsy requirements
+		if (ObjectiveTemplate.Name == 'T5_M1_AutopsyTheAvatar')
+		{
+			ObjectiveTemplate.AssignmentRequirements.RequiredObjectives.RemoveItem('T1_M6_S0_RecoverAvatarCorpse');
+			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('PsiGateObjectiveCompleted');
+			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('StasisSuitObjectiveCompleted');
+			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('AvatarCorpseObjectiveCompleted');
+		}
 	}
 	else
 	{

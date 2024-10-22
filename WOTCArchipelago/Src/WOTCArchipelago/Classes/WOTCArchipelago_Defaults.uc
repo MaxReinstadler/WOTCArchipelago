@@ -16,5 +16,10 @@ var config bool DEF_SKIP_FACTION_MISSIONS;
 var config bool DEF_DISARM_AMBUSH_RISK;
 var config bool DEF_DISARM_CAPTURE_RISK;
 
+// Set story objective completion requirements
+var config bool DEF_REQ_PSI_GATE_OBJ;
+var config bool DEF_REQ_STASIS_SUIT_OBJ;
+var config bool DEF_REQ_AVATAR_CORPSE_OBJ;
+
 // MCM version
 var config int DEF_VERSION;

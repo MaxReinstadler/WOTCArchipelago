@@ -18,6 +18,11 @@ var config bool CFG_SKIP_FACTION_MISSIONS;
 var config bool CFG_DISARM_AMBUSH_RISK;
 var config bool CFG_DISARM_CAPTURE_RISK;
 
+// Set story objective completion requirements
+var config bool CFG_REQ_PSI_GATE_OBJ;
+var config bool CFG_REQ_STASIS_SUIT_OBJ;
+var config bool CFG_REQ_AVATAR_CORPSE_OBJ;
+
 // MCM version
 var config int CFG_VERSION;
 
@@ -32,6 +37,10 @@ var config int CFG_VERSION;
 
 `MCM_API_CheckboxFns(DISARM_AMBUSH_RISK)
 `MCM_API_CheckboxFns(DISARM_CAPTURE_RISK)
+
+`MCM_API_CheckboxFns(REQ_PSI_GATE_OBJ)
+`MCM_API_CheckboxFns(REQ_STASIS_SUIT_OBJ)
+`MCM_API_CheckboxFns(REQ_AVATAR_CORPSE_OBJ)
 
 `MCM_API_VersionChecker(VERSION)
 
@@ -49,6 +58,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     local MCM_API_SettingsPage Page;
     local MCM_API_SettingsGroup GroupGeneral;
 	local MCM_API_SettingsGroup GroupDuration;
+	local MCM_API_SettingsGroup GroupCompletion;
     
     LoadSavedSettings();
     
@@ -70,6 +80,12 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
 	`MCM_API_AddCheckbox(GroupDuration, DISARM_AMBUSH_RISK, "Disarm Ambush Risk", "Disables effects of covert op ambush risk.");
 	`MCM_API_AddCheckbox(GroupDuration, DISARM_CAPTURE_RISK, "Disarm Capture Risk", "Disables effects of covert op soldier capture risk.");
+
+	GroupCompletion = Page.AddGroup('Group3', "Campaign Completion Requirements");
+
+	`MCM_API_AddCheckbox(GroupCompletion, REQ_PSI_GATE_OBJ, "Require Psi Gate Objective", "Final mission requires completion of psi gate research to unlock.");
+	`MCM_API_AddCheckbox(GroupCompletion, REQ_STASIS_SUIT_OBJ, "Require Stasis Suit Objective", "Final mission requires completion of stasis suit research to unlock.");
+	`MCM_API_AddCheckbox(GroupCompletion, REQ_AVATAR_CORPSE_OBJ, "Require Avatar Corpse Objective", "Final mission requires acquisition of avatar corpse to unlock.");
     
     Page.ShowSettings();
 }
@@ -86,6 +102,10 @@ simulated function LoadSavedSettings()
 
 	CFG_DISARM_AMBUSH_RISK = `APCFG(DISARM_AMBUSH_RISK);
 	CFG_DISARM_CAPTURE_RISK = `APCFG(DISARM_CAPTURE_RISK);
+
+	CFG_REQ_PSI_GATE_OBJ = `APCFG(REQ_PSI_GATE_OBJ);
+	CFG_REQ_STASIS_SUIT_OBJ = `APCFG(REQ_STASIS_SUIT_OBJ);
+	CFG_REQ_AVATAR_CORPSE_OBJ = `APCFG(REQ_AVATAR_CORPSE_OBJ);
 }
 
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)

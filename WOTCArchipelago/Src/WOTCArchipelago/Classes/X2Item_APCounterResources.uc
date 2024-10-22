@@ -4,8 +4,14 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> APCounterItems;
 
+	// Items Received
 	APCounterItems.AddItem(CreateCounterTemplate('ItemsReceivedStrategy'));
 	APCounterItems.AddItem(CreateCounterTemplate('ItemsReceivedTactical'));
+
+	// Story Objectives Completed
+	APCounterItems.AddItem(CreateCounterTemplate('PsiGateObjectiveCompleted'));
+	APCounterItems.AddItem(CreateCounterTemplate('StasisSuitObjectiveCompleted'));
+	APCounterItems.AddItem(CreateCounterTemplate('AvatarCorpseObjectiveCompleted'));
 
 	return APCounterItems;
 }
