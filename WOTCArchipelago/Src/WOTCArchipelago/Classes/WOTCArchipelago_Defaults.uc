@@ -16,6 +16,9 @@ var config bool DEF_SKIP_FACTION_MISSIONS;
 var config bool DEF_DISARM_AMBUSH_RISK;
 var config bool DEF_DISARM_CAPTURE_RISK;
 
+// Increase XP gain
+var config float DEF_EXTRA_XP_MULT;
+
 // Set story objective completion requirements
 var config bool DEF_REQ_PSI_GATE_OBJ;
 var config bool DEF_REQ_STASIS_SUIT_OBJ;

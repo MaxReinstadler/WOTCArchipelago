@@ -28,16 +28,29 @@ static private function X2EventListenerTemplate CreateListenerTemplate()
 
 static protected function EventListenerReturn OnUnitDied(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
 {
-	local XComGameState_Unit	UnitState;
-	local name					CharacterGroupName;
-	local array<name>			ValidCharacterGroupNames;
-	local name					EnemyKillCheckName;
+	local XComGameState_Unit UnitState;
 
 	UnitState = XComGameState_Unit(EventData);
+	if (UnitState == none) return ELR_NoInterrupt;
 
-	if (EventData == none) return ELR_NoInterrupt;
+	if (UnitState.GetTeam() == eTeam_Alien || UnitState.GetTeam() == eTeam_TheLost) OnEnemyDied(NewGameState, UnitState);
 
-	CharacterGroupName = UnitState.GetMyTemplateGroupName();
+	return ELR_NoInterrupt;
+}
+
+static private function OnEnemyDied(XComGameState NewGameState, XComGameState_Unit EnemyState)
+{
+	SendEnemyKillCheck(NewGameState, EnemyState);
+	DistributeExtraXP(NewGameState, EnemyState);
+}
+
+static private function SendEnemyKillCheck(XComGameState NewGameState, XComGameState_Unit EnemyState)
+{
+	local name			CharacterGroupName;
+	local array<name>	ValidCharacterGroupNames;
+	local name			EnemyKillCheckName;
+
+	CharacterGroupName = EnemyState.GetMyTemplateGroupName();
 
 	// List of unit types we want to track
 	ValidCharacterGroupNames.AddItem('Sectoid');
@@ -70,13 +83,35 @@ static protected function EventListenerReturn OnUnitDied(Object EventData, Objec
 	ValidCharacterGroupNames.AddItem('ChosenSniper');
 	ValidCharacterGroupNames.AddItem('ChosenWarlock');
 
-	// Tracking is disabled for the unit type that died (e.g. it wasn't an enemy)
-	if (ValidCharacterGroupNames.Find(CharacterGroupName) == INDEX_NONE) return ELR_NoInterrupt;
+	// Check if tracking is disabled for the unit type that died
+	if (ValidCharacterGroupNames.Find(CharacterGroupName) != INDEX_NONE)
+	{
+		EnemyKillCheckName = name("Kill" $ CharacterGroupName);
+		`APCLIENT.OnCheckReached(NewGameState, EnemyKillCheckName);
+	}
+}
 
-	EnemyKillCheckName = name("Kill" $ CharacterGroupName);
-	`APCLIENT.OnCheckReached(NewGameState, EnemyKillCheckName);
+static private function DistributeExtraXP(XComGameState NewGameState, XComGameState_Unit EnemyState)
+{
+	local StateObjectReference	SoldierRef;
+	local XComGameState_Unit	SoldierState;
+	local float					ExtraXp;
 
-	return ELR_NoInterrupt;
+	foreach `XCOMHQ.Squad(SoldierRef)
+	{
+		if (SoldierRef.ObjectID == 0) continue;
+
+		SoldierState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(SoldierRef.ObjectID));
+		
+		if (SoldierState != none && SoldierState.IsSoldier() && SoldierState.CanEarnXP() && SoldierState.IsAlive())
+		{
+			ExtraXp = EnemyState.GetMyTemplate().KillContribution * `APCFG(EXTRA_XP_MULT);
+
+			SoldierState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
+			`AMLOG("Adding XP: " $ ExtraXp $ " to " $ SoldierState.GetFullName());
+			SoldierState.BonusKills += ExtraXp; // Add to bonus kills (like Wet Work, Depper Learning)
+		}
+	}
 }
 
 static protected function EventListenerReturn OnXComVictory(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
