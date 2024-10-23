@@ -28,6 +28,7 @@
 
 `define MCM_API_CheckboxFns(VAR) `MCM_API_BasicCheckboxSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, bool)
 `define MCM_API_SliderFns(VAR) `MCM_API_BasicSliderSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, int)
+`define MCM_API_FloatSliderFns(VAR) `MCM_API_BasicSliderSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, float)
 
 `define MCM_API_AddCheckbox(GROUP, VAR, LABEL, DESC) `{GROUP}.AddCheckbox('`{VAR}', `{LABEL}, `{DESC}, CFG_`{VAR}, `{VAR}_SaveHandler)
 `define MCM_API_AddSlider(GROUP, VAR, LABEL, DESC, MIN, MAX, STEP) `{GROUP}.AddSlider('`{VAR}', `{LABEL}, `{DESC}, `MIN, `MAX, `STEP, CFG_`{VAR}, `{VAR}_SaveHandler)
