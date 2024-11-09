@@ -10,6 +10,7 @@ var private int SinceLastTick;
 var private string TechCompletedType;
 var private string ResourceType;
 var private string WeaponModType;
+var private string StaffType;
 
 static function WOTCArchipelago_APClient GetAPClient()
 {
@@ -42,6 +43,7 @@ private function Initialize()
 	TechCompletedType = "[TechCompleted]";
 	ResourceType = "[Resource]";
 	WeaponModType = "[WeaponMod]";
+	StaffType = "[Staff]";
 }
 
 // CheckName depends on the type of check
@@ -191,7 +193,7 @@ private final function HandleMessage(string Message)
 	{
 		TemplateName = name(Mid(Lines[0], Len(TechCompletedType)));
 
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding TechCompleted item to HQ Inventory");
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding TechCompleted item to HQ inventory");
 		AddItemToHQInventory(NewGameState, TemplateName);
 		`XEVENTMGR.TriggerEvent('ResearchCompleted', , , NewGameState); // Trigger ResearchCompleted event
 		`GAMERULES.SubmitGameState(NewGameState);
@@ -203,7 +205,7 @@ private final function HandleMessage(string Message)
 		TemplateName = name(ResourceData[0]);
 		Quantity = int(ResourceData[1]);
 
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding resource item to HQ Inventory");
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding resource item to HQ inventory");
 		AddItemToHQInventory(NewGameState, TemplateName, Quantity);
 		`GAMERULES.SubmitGameState(NewGameState);
 	}
@@ -212,8 +214,19 @@ private final function HandleMessage(string Message)
 	{
 		TemplateName = name(Mid(Lines[0], Len(WeaponModType)));
 
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding weapon mod item to HQ Inventory");
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding weapon mod item to HQ inventory");
 		AddItemToHQInventory(NewGameState, TemplateName);
+		`GAMERULES.SubmitGameState(NewGameState);
+	}
+	// Staff
+	else if (Left(Lines[0], Len(StaffType)) == StaffType)
+	{
+		ResourceData = SplitString(Mid(Lines[0], Len(StaffType)), ":");
+		TemplateName = name(ResourceData[0]);
+		Quantity = int(ResourceData[1]);
+
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding staff to HQ crew");
+		AddStaffToHQCrew(NewGameState, TemplateName, Quantity);
 		`GAMERULES.SubmitGameState(NewGameState);
 	}
 	else
@@ -271,6 +284,28 @@ static private final function RemoveItemFromHQInventory(XComGameState NewGameSta
 	if (TemplateName == 'StasisSuitObjectiveCompleted') return;
 	if (TemplateName == 'AvatarCorpseObjectiveCompleted') return;
 	`AMLOG("Removed item from HQ inventory: " $ TemplateName $ " x" $ Quantity);
+}
+
+static private final function AddStaffToHQCrew(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
+{
+	local XComGameState_HeadquartersXCom	XComHQ;
+	local XComGameState_Unit				UnitState;
+	local int								Idx;
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+
+	for (Idx = 0; Idx < Quantity; Idx++)
+	{
+		// Create UnitState
+		UnitState = `CHARACTERPOOLMGR.CreateCharacter(NewGameState, `XPROFILESETTINGS.Data.m_eCharPoolUsage, TemplateName);
+		UnitState.RandomizeStats();
+
+		// Add staff to crew
+		XComHQ.AddToCrew(NewGameState, UnitState);
+		XComHQ.HandlePowerOrStaffingChange(NewGameState);
+	}
+
+	`AMLOG("Added staff to HQ crew: " $ TemplateName $ " x" $ Quantity);
 }
 
 static private final function int GetItemQuantityInHQInventory(XComGameState NewGameState, const name TemplateName)
