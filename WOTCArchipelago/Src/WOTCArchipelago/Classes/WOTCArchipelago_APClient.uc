@@ -11,6 +11,7 @@ var private string TechCompletedType;
 var private string ResourceType;
 var private string WeaponModType;
 var private string StaffType;
+var private string TrapType;
 
 static function WOTCArchipelago_APClient GetAPClient()
 {
@@ -44,6 +45,7 @@ private function Initialize()
 	ResourceType = "[Resource]";
 	WeaponModType = "[WeaponMod]";
 	StaffType = "[Staff]";
+	TrapType = "[Trap]";
 }
 
 // CheckName depends on the type of check
@@ -229,6 +231,17 @@ private final function HandleMessage(string Message)
 		AddStaffToHQCrew(NewGameState, TemplateName, Quantity);
 		`GAMERULES.SubmitGameState(NewGameState);
 	}
+	// Trap
+	else if (Left(Lines[0], Len(TrapType)) == TrapType)
+	{
+		ResourceData = SplitString(Mid(Lines[0], Len(TrapType)), ":");
+		TemplateName = name(ResourceData[0]);
+		Quantity = int(ResourceData[1]);
+
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Triggering trap");
+		TriggerTrap(NewGameState, TemplateName, Quantity);
+		`GAMERULES.SubmitGameState(NewGameState);
+	}
 	else
 	{
 		// No item received, raise arbitrary dialogue and exit
@@ -306,6 +319,38 @@ static private final function AddStaffToHQCrew(XComGameState NewGameState, const
 	}
 
 	`AMLOG("Added staff to HQ crew: " $ TemplateName $ " x" $ Quantity);
+}
+
+static private final function TriggerTrap(XComGameState NewGameState, const name TrapName, optional int Quantity = 1)
+{
+	local XComGameStateHistory				History;
+	local XComGameState_HeadquartersAlien	AlienHQ;
+	local int								StartingForceLevel;
+	local int								MaxForceLevel;
+	local int								Idx;
+
+	History = `XCOMHISTORY;
+	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
+
+	StartingForceLevel = class'XComGameState_HeadquartersAlien'.default.AlienHeadquarters_StartingForceLevel;
+	MaxForceLevel = class'XComGameState_HeadquartersAlien'.default.AlienHeadquarters_MaxForceLevel;
+
+	for (Idx = 0; Idx < Quantity; Idx++)
+	{
+		// Doom
+		if (TrapName == 'Doom')
+		{
+			AlienHQ.ModifyDoom();
+		}
+		// Force Level
+		else if (TrapName == 'ForceLevel')
+		{
+			AlienHQ.ForceLevel = Clamp(AlienHQ.ForceLevel + 1, StartingForceLevel, MaxForceLevel);
+		}
+	}
+
+	`AMLOG("Triggered trap: " $ TrapName $ " x" $ Quantity);
 }
 
 static private final function int GetItemQuantityInHQInventory(XComGameState NewGameState, const name TemplateName)
