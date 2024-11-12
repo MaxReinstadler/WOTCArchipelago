@@ -141,12 +141,16 @@ static final function HandleObjectiveCompletion()
 private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
 	local array<string>		Messages;
+	local int				NumMessages;
 	local string			Message;
 	local int				ItemNr;
 
 	Messages = SplitString(Resp.Body, "\n\n", true);
 
-	for (ItemNr = 0; ItemNr < Messages.Length; ItemNr++)
+	// Max 5 messages per tick
+	NumMessages = Min(5, Messages.Length);
+
+	for (ItemNr = 0; ItemNr < NumMessages; ItemNr++)
 	{
 		Message = Messages[ItemNr];
 		
@@ -159,12 +163,16 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
 	local array<string>		Messages;
+	local int				NumMessages;
 	local string			Message;
 	local int				ItemNr;
 
 	Messages = SplitString(Resp.Body, "\n\n", true);
 
-	for (ItemNr = 0; ItemNr < Messages.Length; ItemNr++)
+	// Max 5 messages per tick
+	NumMessages = Min(5, Messages.Length);
+
+	for (ItemNr = 0; ItemNr < NumMessages; ItemNr++)
 	{
 		Message = Messages[ItemNr];
 		
