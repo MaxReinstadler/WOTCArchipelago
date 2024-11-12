@@ -331,14 +331,12 @@ static private final function AddStaffToHQCrew(XComGameState NewGameState, const
 
 static private final function TriggerTrap(XComGameState NewGameState, const name TrapName, optional int Quantity = 1)
 {
-	local XComGameStateHistory				History;
 	local XComGameState_HeadquartersAlien	AlienHQ;
 	local int								StartingForceLevel;
 	local int								MaxForceLevel;
 	local int								Idx;
 
-	History = `XCOMHISTORY;
-	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
 	AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
 
 	StartingForceLevel = class'XComGameState_HeadquartersAlien'.default.AlienHeadquarters_StartingForceLevel;
