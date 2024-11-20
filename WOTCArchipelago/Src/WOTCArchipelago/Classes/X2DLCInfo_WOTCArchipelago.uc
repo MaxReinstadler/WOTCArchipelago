@@ -51,6 +51,10 @@ static event OnPostTemplatesCreated()
 	// Patch covert action risk templates to disarm ambush and capture risks
 	`AMLOG("Patching Covert Op Risk Templates");
 	IterateTemplatesAllDiff(class'X2CovertActionRiskTemplate', PatchCovertActionRiskTemplates);
+
+	// Patch chosen hunt covert action templates to alter rewards
+	`AMLOG("Patching Covert Op Templates");
+	IterateTemplatesAllDiff(class'X2CovertActionTemplate', PatchCovertActionTemplates);
 }
 
 // Patch research projects to alter effects upon completion
@@ -291,6 +295,28 @@ static private function PatchCovertActionRiskTemplates(X2DataTemplate DataTempla
 	{
 		CovertActionRiskTemplate.ApplyRiskFn = class'X2StrategyElement_OverrideMissionSources'.static.ApplySoldierCaptured_Override;
 		`AMLOG("Patched " $ CovertActionRiskTemplate.Name);
+	}
+}
+
+// Patch chosen hunt covert action templates to alter rewards
+static private function PatchCovertActionTemplates(X2DataTemplate DataTemplate)
+{
+	local X2CovertActionTemplate	CovertActionTemplate;
+	local array<name>				NewRewards;
+	local array<name>				ChosenHuntNames;
+
+	CovertActionTemplate = X2CovertActionTemplate(DataTemplate);
+
+	NewRewards.AddItem('Reward_APChosenHunt');
+	ChosenHuntNames.AddItem('CovertAction_RevealChosenMovements');
+	ChosenHuntNames.AddItem('CovertAction_RevealChosenStrengths');
+	ChosenHuntNames.AddItem('CovertAction_RevealChosenStronghold');
+
+	// Only patch chosen hunt covert actions
+	if (ChosenHuntNames.Find(CovertActionTemplate.DataName) != INDEX_NONE)
+	{
+		CovertActionTemplate.Rewards = NewRewards;
+		`AMLOG("Patched " $ CovertActionTemplate.Name);
 	}
 }
 

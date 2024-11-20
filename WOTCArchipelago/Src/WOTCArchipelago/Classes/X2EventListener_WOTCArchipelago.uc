@@ -15,12 +15,11 @@ static private function X2EventListenerTemplate CreateListenerTemplate()
 
     `CREATE_X2TEMPLATE(class'X2EventListenerTemplate', Template, 'APEventListenerTemplate');
 
-    // Should the Event Listener listen for the event during tactical missions?
     Template.RegisterInTactical = true;
-    // Should listen to the event while on Avenger?
     Template.RegisterInStrategy = true;
 
 	Template.AddEvent('UnitDied', OnUnitDied);
+	Template.AddEvent('CovertActionCompleted', OnCovertActionCompleted);
     Template.AddEvent('XComVictory', OnXComVictory);
 
     return Template;
@@ -109,14 +108,37 @@ static private function DistributeExtraXP(XComGameState NewGameState, XComGameSt
 
 			SoldierState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
 			`AMLOG("Adding XP: " $ ExtraXp $ " to " $ SoldierState.GetFullName());
-			SoldierState.BonusKills += ExtraXp; // Add to bonus kills (like Wet Work, Depper Learning)
+			SoldierState.BonusKills += ExtraXp; // Add to bonus kills (like Wet Work, Deeper Learning)
 		}
 	}
+}
+
+static protected function EventListenerReturn OnCovertActionCompleted(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
+{
+	local XComGameState_ResistanceFaction	FactionState;
+	local name								CheckedCounterName;
+	local int								ChosenHuntPart;
+	local int								ChosenHuntPartCount;
+
+	class'X2Item_APCounterResources'.static.GetRecentCompletedChosenHuntFaction(FactionState, CheckedCounterName);
+
+	// No chosen hunt covert action
+	if (FactionState == none) return ELR_NoInterrupt;
+
+	// HACK: Passing the GameState breaks the read macros right after, but not passing it works fine. Must be haunted.
+	ChosenHuntPart = `APCTRINC(CheckedCounterName);
+
+	if (`APCTRREAD('ReaperChosenHuntChecked') >= ChosenHuntPart) ChosenHuntPartCount += 1;
+	if (`APCTRREAD('SkirmisherChosenHuntChecked') >= ChosenHuntPart) ChosenHuntPartCount += 1;
+	if (`APCTRREAD('TemplarChosenHuntChecked') >= ChosenHuntPart) ChosenHuntPartCount += 1;
+
+	`APCLIENT.OnCheckReached(NewGameState, name("ChosenHuntPt" $ ChosenHuntPart $ ":" $ ChosenHuntPartCount));
+
+	return ELR_NoInterrupt;
 }
 
 static protected function EventListenerReturn OnXComVictory(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
 {
 	`APCLIENT.OnCheckReached(NewGameState, 'Victory');
-
 	return ELR_NoInterrupt;
 }

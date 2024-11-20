@@ -66,6 +66,9 @@
     <Content Include="Src\WOTCArchipelago\Classes\X2DLCInfo_WOTCArchipelago.uc" />
     <Content Include="Src\WOTCArchipelago\Classes\Help.uc" />
     <Content Include="Src\WOTCArchipelago\Classes\ConfigEngine.uc" />
+    <Content Include="Src\WOTCArchipelago\Classes\X2StrategyElement_APRewards.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTCArchipelago\Classes\X2StrategyElement_OverrideMissionSources.uc">
       <SubType>Content</SubType>
     </Content>
