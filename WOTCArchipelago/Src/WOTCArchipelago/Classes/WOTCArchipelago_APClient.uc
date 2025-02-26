@@ -54,6 +54,7 @@ private function Initialize()
 //
 // Research/Shadow Chamber Projects:	TechTemplate.DataName
 // Enemy Kills:							'Kill' + CharTemplate.CharacterGroupName
+// Item Uses:							'Use' + ItemTemplate.DataName (except experimental items)
 // Chosen Hunt Covert Actions:			'ChosenHuntPt' + [1/2/3] + ':' + [1/2/3]
 function OnCheckReached(XComGameState NewGameState, name CheckName)
 {

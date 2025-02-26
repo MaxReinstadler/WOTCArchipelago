@@ -55,6 +55,14 @@ static event OnPostTemplatesCreated()
 	// Patch chosen hunt covert action templates to alter rewards
 	`AMLOG("Patching Covert Op Templates");
 	IterateTemplatesAllDiff(class'X2CovertActionTemplate', PatchCovertActionTemplates);
+
+	// Patch ammo templates to add item use check effect
+	`AMLOG("Patching Ammo Templates");
+	IterateTemplatesAllDiff(class'X2AmmoTemplate', PatchAmmoTemplates);
+
+	// Patch ability templates to add item use check effect
+	`AMLOG("Patching Ability Templates");
+	IterateTemplatesAllDiff(class'X2AbilityTemplate', PatchAbilityTemplates);
 }
 
 // Patch research projects to alter effects upon completion
@@ -318,6 +326,29 @@ static private function PatchCovertActionTemplates(X2DataTemplate DataTemplate)
 		CovertActionTemplate.Rewards = NewRewards;
 		`AMLOG("Patched " $ CovertActionTemplate.Name);
 	}
+}
+
+// Patch ammo templates to add item use check effect
+static private function PatchAmmoTemplates(X2DataTemplate DataTemplate)
+{
+	local X2AmmoTemplate AmmoTemplate;
+
+	AmmoTemplate = X2AmmoTemplate(DataTemplate);
+	AmmoTemplate.TargetEffects.AddItem(new class'X2Effect_ItemUseCheck');
+
+	`AMLOG("Patched " $ AmmoTemplate.Name);
+}
+
+// Patch ability templates to add item use check effect
+static private function PatchAbilityTemplates(X2DataTemplate DataTemplate)
+{
+	local X2AbilityTemplate AbilityTemplate;
+
+	AbilityTemplate = X2AbilityTemplate(DataTemplate);
+	if (AbilityTemplate.eAbilityIconBehaviorHUD == eAbilityIconBehavior_NeverShow) return;
+	AbilityTemplate.AddShooterEffect(new class'X2Effect_ItemUseCheck');
+
+	`AMLOG("Patched " $ AbilityTemplate.Name);
 }
 
 
