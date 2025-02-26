@@ -19,6 +19,9 @@ var config bool DEF_DISARM_CAPTURE_RISK;
 // Increase XP gain
 var config float DEF_EXTRA_XP_MULT;
 
+// Increase corpse gain
+var config int DEF_EXTRA_CORPSES;
+
 // Set story objective completion requirements
 var config bool DEF_REQ_PSI_GATE_OBJ;
 var config bool DEF_REQ_STASIS_SUIT_OBJ;

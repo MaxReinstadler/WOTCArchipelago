@@ -21,6 +21,9 @@ var config bool CFG_DISARM_CAPTURE_RISK;
 // Increase XP gain
 var config float CFG_EXTRA_XP_MULT;
 
+// Increase corpse gain
+var config int CFG_EXTRA_CORPSES;
+
 // Set story objective completion requirements
 var config bool CFG_REQ_PSI_GATE_OBJ;
 var config bool CFG_REQ_STASIS_SUIT_OBJ;
@@ -42,6 +45,8 @@ var config int CFG_VERSION;
 `MCM_API_CheckboxFns(DISARM_CAPTURE_RISK)
 
 `MCM_API_FloatSliderFns(EXTRA_XP_MULT)
+
+`MCM_API_SliderFns(EXTRA_CORPSES)
 
 `MCM_API_CheckboxFns(REQ_PSI_GATE_OBJ)
 `MCM_API_CheckboxFns(REQ_STASIS_SUIT_OBJ)
@@ -88,6 +93,8 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
 	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, "Increase XP Gain", "All soldiers passively gain extra XP on missions.", 0.0f, 2.0f, 0.05f);
 
+	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, "Increase Corpse Gain", "Gain additional corpses for each enemy killed.", 0, 5, 1);
+
 	GroupCompletion = Page.AddGroup('Group3', "Campaign Completion Requirements");
 
 	`MCM_API_AddCheckbox(GroupCompletion, REQ_PSI_GATE_OBJ, "Require Psi Gate Objective", "Final mission requires completion of psi gate research to unlock.");
@@ -111,6 +118,8 @@ simulated function LoadSavedSettings()
 	CFG_DISARM_CAPTURE_RISK = `APCFG(DISARM_CAPTURE_RISK);
 
 	CFG_EXTRA_XP_MULT = `APCFG(EXTRA_XP_MULT);
+
+	CFG_EXTRA_CORPSES = `APCFG(EXTRA_CORPSES);
 
 	CFG_REQ_PSI_GATE_OBJ = `APCFG(REQ_PSI_GATE_OBJ);
 	CFG_REQ_STASIS_SUIT_OBJ = `APCFG(REQ_STASIS_SUIT_OBJ);

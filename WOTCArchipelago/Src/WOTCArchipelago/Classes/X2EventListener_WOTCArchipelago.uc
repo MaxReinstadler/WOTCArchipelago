@@ -41,6 +41,7 @@ static private function OnEnemyDied(XComGameState NewGameState, XComGameState_Un
 {
 	SendEnemyKillCheck(NewGameState, EnemyState);
 	DistributeExtraXP(NewGameState, EnemyState);
+	GiveExtraCorpses(NewGameState, EnemyState);
 }
 
 static private function SendEnemyKillCheck(XComGameState NewGameState, XComGameState_Unit EnemyState)
@@ -109,6 +110,36 @@ static private function DistributeExtraXP(XComGameState NewGameState, XComGameSt
 			SoldierState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
 			`AMLOG("Adding XP: " $ ExtraXp $ " to " $ SoldierState.GetFullName());
 			SoldierState.BonusKills += ExtraXp; // Add to bonus kills (like Wet Work, Deeper Learning)
+		}
+	}
+}
+
+static private function GiveExtraCorpses(XComGameState NewGameState, XComGameState_Unit EnemyState)
+{
+	local X2LootTableManager		LootTableManager;
+	local XComGameState_BattleData	BattleData;
+	local array<LootReference>		LootRefs;
+	local LootReference				LootRef;
+	local name						LootTableName;
+	local array<name>				LootTemplateNames;
+	local name						LootTemplateName;
+	local int						Num;
+
+	LootTableManager = class'X2LootTableManager'.static.GetLootTableManager();
+	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	BattleData = XComGameState_BattleData(NewGameState.ModifyStateObject(class'XComGameState_BattleData', BattleData.ObjectID));
+	
+	LootRefs = EnemyState.GetMyTemplate().Loot.LootReferences;
+
+	foreach LootRefs(LootRef)
+	{
+		LootTableName = LootRef.LootTableName;
+		LootTableManager.RollForLootTable(LootTableName, LootTemplateNames);
+
+		foreach LootTemplateNames(LootTemplateName)
+		{
+			for (Num = 0; Num < `APCFG(EXTRA_CORPSES); Num++)
+				BattleData.AutoLootBucket.AddItem(LootTemplateName);
 		}
 	}
 }
