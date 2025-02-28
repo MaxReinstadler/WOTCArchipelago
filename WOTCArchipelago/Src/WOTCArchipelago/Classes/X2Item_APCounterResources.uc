@@ -23,6 +23,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	APCounterItems.AddItem(CreateCounterTemplate('HunterStrongholdReceived'));
 	APCounterItems.AddItem(CreateCounterTemplate('WarlockStrongholdReceived'));
 
+	// Chosen Defeated
+	APCounterItems.AddItem(CreateCounterTemplate('ChosenDefeated'));
+
 	// Story Objectives Completed
 	APCounterItems.AddItem(CreateCounterTemplate('PsiGateObjectiveCompleted'));
 	APCounterItems.AddItem(CreateCounterTemplate('StasisSuitObjectiveCompleted'));

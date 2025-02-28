@@ -21,6 +21,8 @@ static private function X2EventListenerTemplate CreateListenerTemplate()
 	Template.AddEvent('UnitDied', OnUnitDied);
 	Template.AddEvent('CovertActionCompleted', OnCovertActionCompleted);
     Template.AddEvent('XComVictory', OnXComVictory);
+	Template.AddEvent('CameraAtBroadcast', OnBroadcast);
+	Template.AddEvent('AfterAction_ChosenDefeated', OnChosenDefeated);
 
     return Template;
 }
@@ -171,5 +173,21 @@ static protected function EventListenerReturn OnCovertActionCompleted(Object Eve
 static protected function EventListenerReturn OnXComVictory(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
 {
 	`APCLIENT.OnCheckReached(NewGameState, 'Victory');
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OnBroadcast(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
+{
+	`APCLIENT.OnCheckReached(NewGameState, 'Broadcast');
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OnChosenDefeated(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
+{
+	local int NumChosenDefeated;
+
+	NumChosenDefeated = `APCTRINC('ChosenDefeated');
+	if (NumChosenDefeated <= 3)
+		`APCLIENT.OnCheckReached(NewGameState, name("Stronghold" $ NumChosenDefeated));
 	return ELR_NoInterrupt;
 }
