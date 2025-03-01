@@ -21,7 +21,7 @@ static private function X2EventListenerTemplate CreateListenerTemplate()
 	Template.AddEvent('UnitDied', OnUnitDied);
 	Template.AddEvent('CovertActionCompleted', OnCovertActionCompleted);
     Template.AddEvent('XComVictory', OnXComVictory);
-	Template.AddEvent('CameraAtBroadcast', OnBroadcast);
+	Template.AddEvent('AfterActionWalkUp', OnWalkUp);
 	Template.AddEvent('AfterAction_ChosenDefeated', OnChosenDefeated);
 
     return Template;
@@ -176,9 +176,12 @@ static protected function EventListenerReturn OnXComVictory(Object EventData, Ob
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn OnBroadcast(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
+static protected function EventListenerReturn OnWalkUp(Object EventData, Object EventSource, XComGameState NewGameState, name EventName, Object CallbackData)
 {
-	`APCLIENT.OnCheckReached(NewGameState, 'Broadcast');
+	local XComGameState_MissionSite MissionState;
+	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(`XCOMHQ.MissionRef.ObjectID));
+	if (MissionState.GetMissionSource().DataName == 'MissionSource_Broadcast')
+		`APCLIENT.OnCheckReached(NewGameState, 'Broadcast');
 	return ELR_NoInterrupt;
 }
 
