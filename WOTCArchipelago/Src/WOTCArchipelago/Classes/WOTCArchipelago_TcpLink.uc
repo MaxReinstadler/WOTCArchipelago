@@ -18,6 +18,7 @@ var private string Host;
 var private string Path;
 
 var private bool bIsTickRequest;
+var private name CheckName;
 
 // State tracking for reading the response data in chunks
 var private bool bIsChunkTransferEncoding;
@@ -51,6 +52,7 @@ function Call(coerce string RequestPath,
 	OnRequestError = ErrorHandler;
 
 	bIsTickRequest = (Left(Path, 5) == "/Tick");
+	if (Left(Path, 6) == "/Check") CheckName = name(Mid(Path, 7));
 
 	// Reset per-request state
     bIsChunkTransferEncoding = false;
@@ -258,6 +260,11 @@ event ReceivedText(string Text)
             `WARN("[WOTCArchipelago_TcpLink] Negative number of bytes remaining in chunk: " $ RemainingBytesInChunk);
         }
     }
+}
+
+function name GetCheckName()
+{
+	return CheckName;
 }
 
 private function int HexToInt(string HexVal) {

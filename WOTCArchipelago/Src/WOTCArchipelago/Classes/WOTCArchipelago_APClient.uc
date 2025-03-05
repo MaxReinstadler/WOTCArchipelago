@@ -14,6 +14,8 @@ var private string WeaponModType;
 var private string StaffType;
 var private string TrapType;
 
+var private array<name> CheckBuffer;
+
 static function WOTCArchipelago_APClient GetAPClient()
 {
 	local WOTCArchipelago_APClient APClient;
@@ -77,11 +79,23 @@ private final function CheckResponseHandler(WOTCArchipelago_TcpLink Link, HttpRe
 	{
 		HandleMessage(Message);
 	}
+
+	if (Resp.ResponseCode == 200) ClearCheckBuffer();
 }
 
 private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
-	// Do nothing
+	local name CheckName;
+
+	`AMLOG("Check Error Status: " $ Resp.ResponseCode);
+
+	if (Resp.ResponseCode == 503)
+	{
+		RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
+	}
+
+	CheckName = Link.GetCheckName();
+	if (CheckBuffer.Find(CheckName) == INDEX_NONE) CheckBuffer.AddItem(CheckName);
 }
 
 function Update()
@@ -120,7 +134,7 @@ function Update()
 	}
 }
 
-static final function HandleObjectiveCompletion()
+private final function HandleObjectiveCompletion()
 {
 	local XComGameState						NewGameState;
 	local XComGameState_HeadquartersXCom	XComHQ;
@@ -145,7 +159,7 @@ static final function HandleObjectiveCompletion()
 	`APCTRDEC('AvatarCorpseObjectiveCompleted');
 }
 
-static final function HandleStrongholdUnlock()
+private final function HandleStrongholdUnlock()
 {
 	local XComGameState_AdventChosen ChosenState;
 
@@ -172,6 +186,23 @@ static final function HandleStrongholdUnlock()
 	}
 }
 
+private final function ClearCheckBuffer()
+{
+	local XComGameState		NewGameState;
+	local name				CheckName;
+
+	while (CheckBuffer.Length > 0)
+	{
+		CheckName = CheckBuffer[0];
+
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Re-send check " $ CheckName $ " from buffer");
+		OnCheckReached(NewGameState, CheckName);
+		`GAMERULES.SubmitGameState(NewGameState);
+
+		CheckBuffer.Remove(0, 1);
+	}
+}
+
 private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
 	local array<string>		Messages;
@@ -192,6 +223,8 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 
 		`APCTRINC('ItemsReceivedStrategy');
 	}
+
+	if (Resp.ResponseCode == 200) ClearCheckBuffer();
 }
 
 private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
@@ -214,11 +247,20 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 
 		`APCTRINC('ItemsReceivedTactical');
 	}
+
+	if (Resp.ResponseCode == 200) ClearCheckBuffer();
 }
 
 private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
-	// Do nothing
+	`AMLOG("Tick Error Status: " $ Resp.ResponseCode);
+
+	// Commented out because it's currently too good at freezing the game
+	//
+	// if (Resp.ResponseCode == 503)
+	// {
+	//     RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
+	// }
 }
 
 private final function HandleMessage(string Message)
