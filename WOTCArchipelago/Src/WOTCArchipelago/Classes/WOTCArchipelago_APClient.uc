@@ -529,16 +529,33 @@ static function int ReadCounter(const name CounterName)
 
 static private final function RaiseDialog(string Title, string Text)
 {
-	local TDialogueBoxData kDialogData;
+	local TDialogueBoxData				kDialogData;
+	local SeqAct_ShowDramaticMessage	SeqActShowDramaticMessage;
+	local XComGameState					NewGameState;
 
 	// "None" signifies to skip dialog box
 	if (Title == "None") return;
 	if (Text == "None") return;
 
-	kDialogData.eType		= eDialog_Normal;
-	kDialogData.strTitle	= Title;
-	kDialogData.strText		= Text;
-	kDialogData.strAccept	= "OK";
+	if (`HQPRES != none)
+	{
+		kDialogData.eType		= eDialog_Normal;
+		kDialogData.strTitle	= Title;
+		kDialogData.strText		= Text;
+		kDialogData.strAccept	= "OK";
 
-	if (`HQPRES != none) `HQPRES.UIRaiseDialog(kDialogData);
+		`HQPRES.UIRaiseDialog(kDialogData);
+	}
+	else
+	{
+		SeqActShowDramaticMessage = new class'SeqAct_ShowDramaticMessage';
+		SeqActShowDramaticMessage.Title = "Archipelago";
+		SeqActShowDramaticMessage.Message1 = Title;
+		SeqActShowDramaticMessage.Message2 = Text;
+		SeqActShowDramaticMessage.MessageColor = eUIState_Normal;
+		
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("SeqAct: Archipelago Tactical Message");
+		SeqActShowDramaticMessage.BuildVisualization(NewGameState);
+		`GAMERULES.SubmitGameState(NewGameState);
+	}
 }
