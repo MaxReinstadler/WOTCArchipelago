@@ -73,6 +73,8 @@ private final function CheckResponseHandler(WOTCArchipelago_TcpLink Link, HttpRe
 	local array<string>		Messages;
 	local string			Message;
 
+	if (Resp.ResponseCode >= 300) return;
+
 	Messages = SplitString(Resp.Body, "\n\n", true);
 
 	foreach Messages(Message)
@@ -80,7 +82,7 @@ private final function CheckResponseHandler(WOTCArchipelago_TcpLink Link, HttpRe
 		HandleMessage(Message);
 	}
 
-	if (Resp.ResponseCode == 200) ClearCheckBuffer();
+	ClearCheckBuffer();
 }
 
 private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
@@ -210,6 +212,8 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 	local string			Message;
 	local int				ItemNr;
 
+	if (Resp.ResponseCode >= 300) return;
+
 	Messages = SplitString(Resp.Body, "\n\n", true);
 
 	// Max 5 messages per tick
@@ -224,7 +228,7 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 		`APCTRINC('ItemsReceivedStrategy');
 	}
 
-	if (Resp.ResponseCode == 200) ClearCheckBuffer();
+	ClearCheckBuffer();
 }
 
 private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
@@ -233,6 +237,8 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 	local int				NumMessages;
 	local string			Message;
 	local int				ItemNr;
+
+	if (Resp.ResponseCode >= 300) return;
 
 	Messages = SplitString(Resp.Body, "\n\n", true);
 
@@ -248,7 +254,7 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 		`APCTRINC('ItemsReceivedTactical');
 	}
 
-	if (Resp.ResponseCode == 200) ClearCheckBuffer();
+	ClearCheckBuffer();
 }
 
 private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
