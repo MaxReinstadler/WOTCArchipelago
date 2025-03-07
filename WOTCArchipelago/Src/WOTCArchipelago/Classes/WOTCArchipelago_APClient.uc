@@ -81,7 +81,8 @@ private final function CheckResponseHandler(WOTCArchipelago_TcpLink Link, HttpRe
 	{
 		HandleMessage(Message);
 	}
-
+	
+	Link.Destroy();
 	ClearCheckBuffer();
 }
 
@@ -91,13 +92,22 @@ private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespo
 
 	`AMLOG("Check Error Status: " $ Resp.ResponseCode);
 
-	if (Resp.ResponseCode == 503)
+	// Client can not be reached
+	if (Resp.ResponseCode == 408)
+	{
+		RaiseDialog("Request Timed Out", "Please make sure client and proxy are running on the correct port.");
+	}
+	// Client is not connected to server
+	else if (Resp.ResponseCode == 503)
 	{
 		RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
 	}
 
+	// Add check to re-send buffer
 	CheckName = Link.GetCheckName();
 	if (CheckBuffer.Find(CheckName) == INDEX_NONE) CheckBuffer.AddItem(CheckName);
+	
+	Link.Destroy();
 }
 
 function Update()
@@ -227,7 +237,8 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 
 		`APCTRINC('ItemsReceivedStrategy');
 	}
-
+	
+	Link.Destroy();
 	ClearCheckBuffer();
 }
 
@@ -254,6 +265,7 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 		`APCTRINC('ItemsReceivedTactical');
 	}
 
+	Link.Destroy();
 	ClearCheckBuffer();
 }
 
@@ -261,12 +273,21 @@ private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespon
 {
 	`AMLOG("Tick Error Status: " $ Resp.ResponseCode);
 
-	// Commented out because it's currently too good at freezing the game
-	//
-	// if (Resp.ResponseCode == 503)
-	// {
-	//     RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
-	// }
+	/* Commented out because it's currently too good at freezing the game
+
+	// Client can not be reached
+	if (Resp.ResponseCode == 408)
+	{
+	    RaiseDialog("Request Timed Out", "Please make sure client and proxy are running on the correct port.");
+	}
+	// Client is not connected to server
+	else if (Resp.ResponseCode == 503)
+	{
+	    RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
+	}
+	*/
+	
+	Link.Destroy();
 }
 
 private final function HandleMessage(string Message)

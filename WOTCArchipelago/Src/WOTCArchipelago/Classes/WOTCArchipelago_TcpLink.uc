@@ -18,7 +18,7 @@ var private string Host;
 var private string Path;
 
 var private bool bIsTickRequest;
-var private name CheckName;
+var private float TimeOutDelay;
 
 // State tracking for reading the response data in chunks
 var private bool bIsChunkTransferEncoding;
@@ -52,7 +52,7 @@ function Call(coerce string RequestPath,
 	OnRequestError = ErrorHandler;
 
 	bIsTickRequest = (Left(Path, 5) == "/Tick");
-	if (Left(Path, 6) == "/Check") CheckName = name(Mid(Path, 7));
+	TimeOutDelay = 2.5;
 
 	// Reset per-request state
     bIsChunkTransferEncoding = false;
@@ -65,6 +65,21 @@ function Call(coerce string RequestPath,
 
     if (!bIsTickRequest) `AMLOG("Resolving host: " $ Host);
     Resolve(Host);
+
+	SetTimer(TimeOutDelay, false, 'TimeOut');
+}
+
+function TimeOut()
+{
+	`AMLOG("Request Timed Out");
+	Response.ResponseCode = 408;
+
+	if (OnRequestError != none) OnRequestError(self, Response);
+}
+
+function name GetCheckName()
+{
+	return name(Mid(Path, 7));
 }
 
 function int SendText(coerce string str)
@@ -260,11 +275,6 @@ event ReceivedText(string Text)
             `WARN("[WOTCArchipelago_TcpLink] Negative number of bytes remaining in chunk: " $ RemainingBytesInChunk);
         }
     }
-}
-
-function name GetCheckName()
-{
-	return CheckName;
 }
 
 private function int HexToInt(string HexVal) {
