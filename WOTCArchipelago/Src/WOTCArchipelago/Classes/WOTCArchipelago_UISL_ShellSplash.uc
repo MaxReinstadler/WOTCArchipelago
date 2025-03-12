@@ -22,7 +22,7 @@ function RealizeVersionText(UIShell ShellScreen)
 	if (VersionText == none)
 	{
 		VersionText = ShellScreen.Spawn(class'UIText', ShellScreen);
-		VersionText.InitText('APVersionText', "WOTCArchipelago 0.7.2");
+		VersionText.InitText('APVersionText', "WOTCArchipelago 0.7.3");
 		VersionText.AnchorBottomLeft();
 		VersionText.SetY(-ShellScreen.TickerHeight + 10);
 	}
