@@ -124,28 +124,37 @@ static function HandleResearchCompletion(XComGameState NewGameState, XComGameSta
 static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 {
 	local X2ItemTemplate				ItemTemplate;
+	local int							Idx;
 	local StrategyRequirement			Requirements;
 	local array<name>					RequiredTechs;
 	local name							ReqTechTemplateName;
 	local X2CompletionItemTemplate		CompletionItemTemplate;
 
 	ItemTemplate = X2ItemTemplate(DataTemplate);
-	Requirements = ItemTemplate.Requirements;
 
 	// Replace Tech Requirements with Item Requirements
-	RequiredTechs = Requirements.RequiredTechs;
-	foreach RequiredTechs(ReqTechTemplateName)
+	for (Idx = -1; Idx < ItemTemplate.AlternateRequirements.Length; Idx++)
 	{
-		`AMLOG("Attempting to replace Tech Requirement: " $ ReqTechTemplateName);
-
-		CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(ReqTechTemplateName);
-
-		if (CompletionItemTemplate == none) continue;
+		if (Idx == -1) Requirements = ItemTemplate.Requirements;
+		else Requirements = ItemTemplate.AlternateRequirements[Idx];
 		
-		ItemTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
-		ItemTemplate.Requirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
+		RequiredTechs = Requirements.RequiredTechs;
+		foreach RequiredTechs(ReqTechTemplateName)
+		{
+			`AMLOG("Attempting to replace Tech Requirement: " $ ReqTechTemplateName);
 
-		`AMLOG("Replaced with Item Requirement: " $ CompletionItemTemplate.DataName);
+			CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(ReqTechTemplateName);
+
+			if (CompletionItemTemplate == none) continue;
+		
+			Requirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
+			Requirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
+
+			`AMLOG("Replaced with Item Requirement: " $ CompletionItemTemplate.DataName);
+		}
+
+		if (Idx == -1) ItemTemplate.Requirements = Requirements;
+		else ItemTemplate.AlternateRequirements[Idx] = Requirements;
 	}
 
 	`AMLOG("Patched " $ ItemTemplate.Name);
