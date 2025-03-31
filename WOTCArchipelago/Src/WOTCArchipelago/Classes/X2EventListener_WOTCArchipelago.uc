@@ -1,4 +1,6 @@
-class X2EventListener_WOTCArchipelago extends X2EventListener;
+class X2EventListener_WOTCArchipelago extends X2EventListener config(WOTCArchipelago);
+
+var config array<name> DefaultKillCharacterGroups;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -49,44 +51,12 @@ static private function OnEnemyDied(XComGameState NewGameState, XComGameState_Un
 static private function SendEnemyKillCheck(XComGameState NewGameState, XComGameState_Unit EnemyState)
 {
 	local name			CharacterGroupName;
-	local array<name>	ValidCharacterGroupNames;
 	local name			EnemyKillCheckName;
 
 	CharacterGroupName = EnemyState.GetMyTemplateGroupName();
 
-	// List of unit types we want to track
-	ValidCharacterGroupNames.AddItem('Sectoid');
-	ValidCharacterGroupNames.AddItem('Viper');
-	ValidCharacterGroupNames.AddItem('Muton');
-	ValidCharacterGroupNames.AddItem('Berserker');
-	ValidCharacterGroupNames.AddItem('Archon');
-	ValidCharacterGroupNames.AddItem('Gatekeeper');
-	ValidCharacterGroupNames.AddItem('Andromedon');
-	ValidCharacterGroupNames.AddItem('AndromedonRobot');
-	ValidCharacterGroupNames.AddItem('Faceless');
-	ValidCharacterGroupNames.AddItem('Chryssalid');
-	ValidCharacterGroupNames.AddItem('AdventTrooper');
-	ValidCharacterGroupNames.AddItem('AdventCaptain');
-	ValidCharacterGroupNames.AddItem('Cyberus');
-	ValidCharacterGroupNames.AddItem('AdventPsiWitch');
-	ValidCharacterGroupNames.AddItem('AdventStunLancer');
-	ValidCharacterGroupNames.AddItem('AdventShieldBearer');
-	ValidCharacterGroupNames.AddItem('AdventMEC');
-	ValidCharacterGroupNames.AddItem('AdventTurret');
-	ValidCharacterGroupNames.AddItem('Sectopod');
-	ValidCharacterGroupNames.AddItem('ViperKing');
-	ValidCharacterGroupNames.AddItem('BerserkerQueen');
-	ValidCharacterGroupNames.AddItem('ArchonKing');
-	ValidCharacterGroupNames.AddItem('AdventPurifier');
-	ValidCharacterGroupNames.AddItem('AdventPriest');
-	ValidCharacterGroupNames.AddItem('TheLost');
-	ValidCharacterGroupNames.AddItem('Spectre');
-	ValidCharacterGroupNames.AddItem('ChosenAssassin');
-	ValidCharacterGroupNames.AddItem('ChosenSniper');
-	ValidCharacterGroupNames.AddItem('ChosenWarlock');
-
 	// Check if tracking is disabled for the unit type that died
-	if (ValidCharacterGroupNames.Find(CharacterGroupName) != INDEX_NONE)
+	if (default.DefaultKillCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
 	{
 		EnemyKillCheckName = name("Kill" $ CharacterGroupName);
 		`APCLIENT.OnCheckReached(NewGameState, EnemyKillCheckName);

@@ -25,6 +25,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComWOTCArchipelago.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComWOTCArchipelago_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
