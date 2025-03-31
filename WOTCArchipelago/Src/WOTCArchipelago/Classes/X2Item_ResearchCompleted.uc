@@ -1,83 +1,27 @@
-class X2Item_ResearchCompleted extends X2Item;
+class X2Item_ResearchCompleted extends X2Item config(WOTCArchipelago);
+
+struct native ResearchProject
+{
+	var name TechName;
+	var name CompletionItemName;
+};
+
+var config array<ResearchProject> DefaultResearchProjects;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
-	local array<X2DataTemplate> CompletionItems;
+	local array<X2DataTemplate>		CompletionItems;
+	local ResearchProject			Project;
+	local name						CompletionItemName;
 
-	// BASE GAME
+	foreach default.DefaultResearchProjects(Project)
+	{
+		CompletionItemName = Project.CompletionItemName;
+		if (CompletionItemName == '')
+			CompletionItemName = name(string(Project.TechName) $ "Completed");
 
-	// Weapon Techs
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ModularWeaponsCompleted', 'ModularWeapons'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('MagnetizedWeaponsCompleted', 'MagnetizedWeapons'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('GaussWeaponsCompleted', 'GaussWeapons'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('PlasmaRifleCompleted', 'PlasmaRifle'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('HeavyPlasmaCompleted', 'HeavyPlasma'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('PlasmaSniperCompleted', 'PlasmaSniper'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AlloyCannonCompleted', 'AlloyCannon'));
-
-	// Armor Techs
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('HybridMaterialsCompleted', 'HybridMaterials'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('PlatedArmorCompleted', 'PlatedArmor'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('PoweredArmorCompleted', 'PoweredArmor'));
-
-	// Elerium Tech
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('EleriumCompleted', 'Tech_Elerium'));
-
-	// Psionics Tech
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('PsionicsCompleted', 'Psionics'));
-
-	// Autopsy Techs
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AlienBiotechCompleted', 'AlienBiotech'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsySectoidCompleted', 'AutopsySectoid'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyViperCompleted', 'AutopsyViper'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyMutonCompleted', 'AutopsyMuton'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyBerserkerCompleted', 'AutopsyBerserker'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyArchonCompleted', 'AutopsyArchon'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyGatekeeperCompleted', 'AutopsyGatekeeper'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAndromedonCompleted', 'AutopsyAndromedon'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyFacelessCompleted', 'AutopsyFaceless'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyChryssalidCompleted', 'AutopsyChryssalid'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventTrooperCompleted', 'AutopsyAdventTrooper'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventStunLancerCompleted', 'AutopsyAdventStunLancer'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventShieldbearerCompleted', 'AutopsyAdventShieldbearer'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventMECCompleted', 'AutopsyAdventMEC'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventTurretCompleted', 'AutopsyAdventTurret'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsySectopodCompleted', 'AutopsySectopod'));
-
-	// Golden Path Techs & Shadow Chamber Projects
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ResistanceCommunicationsCompleted', 'ResistanceCommunications'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ResistanceRadioCompleted', 'ResistanceRadio'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventOfficerCompleted', 'AutopsyAdventOfficer'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AlienEncryptionCompleted', 'AlienEncryption'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('CodexBrainPt1Completed', 'CodexBrainPt1'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('CodexBrainPt2Completed', 'CodexBrainPt2'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('BlacksiteDataCompleted', 'BlacksiteData'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ForgeStasisSuitCompleted', 'ForgeStasisSuit'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('PsiGateCompleted', 'PsiGate'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventPsiWitchCompleted', 'AutopsyAdventPsiWitch'));
-
-	// ALIEN HUNTERS DLC
-
-	// Experimental Weapons Tech
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ExperimentalWeaponsCompleted', 'ExperimentalWeapons'));
-
-	// Autopsy Techs
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyViperKingCompleted', 'AutopsyViperKing'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyBerserkerQueenCompleted', 'AutopsyBerserkerQueen'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyArchonKingCompleted', 'AutopsyArchonKing'));
-
-	// WOTC DLC
-
-	// Autopsy Techs
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventPurifierCompleted', 'AutopsyAdventPurifier'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyAdventPriestCompleted', 'AutopsyAdventPriest'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsyTheLostCompleted', 'AutopsyTheLost'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('AutopsySpectreCompleted', 'AutopsySpectre'));
-
-	// Chosen Weapons Techs
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ChosenAssassinWeaponsCompleted', 'ChosenAssassinWeapons'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ChosenHunterWeaponsCompleted', 'ChosenHunterWeapons'));
-	CompletionItems.AddItem(CreateResearchCompletedTemplate('ChosenWarlockWeaponsCompleted', 'ChosenWarlockWeapons'));
+		CompletionItems.AddItem(CreateResearchCompletedTemplate(CompletionItemName, Project.TechName));
+	}
 
 	return CompletionItems;
 }

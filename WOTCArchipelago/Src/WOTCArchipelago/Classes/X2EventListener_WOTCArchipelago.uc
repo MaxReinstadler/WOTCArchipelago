@@ -1,6 +1,13 @@
 class X2EventListener_WOTCArchipelago extends X2EventListener config(WOTCArchipelago);
 
-var config array<name> DefaultKillCharacterGroups;
+struct native CustomGroup
+{
+	var name			GroupName;
+	var array<name>		Members;
+};
+
+var config array<name>				DefaultKillCharacterGroups;
+var config array<CustomGroup>		DefaultKillCustomGroups;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -50,16 +57,22 @@ static private function OnEnemyDied(XComGameState NewGameState, XComGameState_Un
 
 static private function SendEnemyKillCheck(XComGameState NewGameState, XComGameState_Unit EnemyState)
 {
-	local name			CharacterGroupName;
-	local name			EnemyKillCheckName;
+	local name				CharacterTemplateName;
+	local name				CharacterGroupName;
+	local CustomGroup		Group;
 
+	CharacterTemplateName = EnemyState.GetMyTemplateName();
 	CharacterGroupName = EnemyState.GetMyTemplateGroupName();
 
-	// Check if tracking is disabled for the unit type that died
+	// Check Default Kill Character Groups
 	if (default.DefaultKillCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
+		`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ CharacterGroupName));
+
+	// Check Default Kill Custom Groups
+	foreach default.DefaultKillCustomGroups(Group)
 	{
-		EnemyKillCheckName = name("Kill" $ CharacterGroupName);
-		`APCLIENT.OnCheckReached(NewGameState, EnemyKillCheckName);
+		if (Group.Members.Find(CharacterTemplateName) != INDEX_NONE)
+			`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ Group.GroupName));
 	}
 }
 
