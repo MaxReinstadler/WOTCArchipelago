@@ -16,6 +16,13 @@ var private string TrapType;
 
 var private array<name> CheckBuffer;
 
+var localized string strRequestTimedOut;
+var localized string strRequestTimedOutDetails;
+var localized string strClientDisconnected;
+var localized string strClientDisconnectedDetails;
+var localized string strDialogAccept;
+var localized string strDramaticMessageTitle;
+
 static function WOTCArchipelago_APClient GetAPClient()
 {
 	local WOTCArchipelago_APClient APClient;
@@ -95,12 +102,12 @@ private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespo
 	// Client can not be reached
 	if (Resp.ResponseCode == 408)
 	{
-		RaiseDialog("Request Timed Out", "Please make sure client and proxy are running on the correct port.");
+		RaiseDialog(default.strRequestTimedOut, default.strRequestTimedOutDetails);
 	}
 	// Client is not connected to server
 	else if (Resp.ResponseCode == 503)
 	{
-		RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
+		RaiseDialog(default.strClientDisconnected, default.strClientDisconnectedDetails);
 	}
 
 	// Add check to re-send buffer
@@ -278,12 +285,12 @@ private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespon
 	// Client can not be reached
 	if (Resp.ResponseCode == 408)
 	{
-	    RaiseDialog("Request Timed Out", "Please make sure client and proxy are running on the correct port.");
+	    RaiseDialog(default.strRequestTimedOut, default.strRequestTimedOutDetails);
 	}
 	// Client is not connected to server
 	else if (Resp.ResponseCode == 503)
 	{
-	    RaiseDialog("Client Disconnected", "Please connect to the server through the client.");
+	    RaiseDialog(default.strClientDisconnected, default.strClientDisconnectedDetails);
 	}
 	*/
 	
@@ -611,14 +618,14 @@ static private final function RaiseDialog(string Title, string Text)
 		kDialogData.eType		= eDialog_Normal;
 		kDialogData.strTitle	= Title;
 		kDialogData.strText		= Text;
-		kDialogData.strAccept	= "OK";
+		kDialogData.strAccept	= default.strDialogAccept;
 
 		`HQPRES.UIRaiseDialog(kDialogData);
 	}
 	else
 	{
 		SeqActShowDramaticMessage = new class'SeqAct_ShowDramaticMessage';
-		SeqActShowDramaticMessage.Title = "Archipelago";
+		SeqActShowDramaticMessage.Title = default.strDramaticMessageTitle;
 		SeqActShowDramaticMessage.Message1 = Title;
 		SeqActShowDramaticMessage.Message2 = Text;
 		SeqActShowDramaticMessage.MessageColor = eUIState_Normal;

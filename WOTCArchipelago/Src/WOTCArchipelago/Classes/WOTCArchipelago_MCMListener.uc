@@ -29,6 +29,39 @@ var config bool CFG_REQ_PSI_GATE_OBJ;
 var config bool CFG_REQ_STASIS_SUIT_OBJ;
 var config bool CFG_REQ_AVATAR_CORPSE_OBJ;
 
+var localized string strMenuPageTitle;
+var localized string strSettingsPageTitle;
+
+var localized string strGroupGeneralTitle;
+var localized string strSettingDebugLoggingName;
+var localized string strSettingDebugLoggingDetails;
+var localized string strSettingProxyPortName;
+var localized string strSettingProxyPortDetails;
+
+var localized string strGroupReducedCampaignDuration;
+var localized string strSettingSkipSupplyRaidsName;
+var localized string strSettingSkipSupplyRaidsDetails;
+var localized string strSettingSkipCouncilMissionsName;
+var localized string strSettingSkipCouncilMissionsDetails;
+var localized string strSettingSkipResistanceOpsName;
+var localized string strSettingSkipResistanceOpsDetails;
+var localized string strSettingDisarmAmbushName;
+var localized string strSettingDisarmAmbushDetails;
+var localized string strSettingDisarmCaptureName;
+var localized string strSettingDisarmCaptureDetails;
+var localized string strSettingIncreaseXPName;
+var localized string strSettingIncreaseXPDetails;
+var localized string strSettingIncreaseCorpseGainName;
+var localized string strSettingIncreaseCorpseGainDetails;
+
+var localized string strGroupCampaignCompletionRequirements;
+var localized string strSettingPsiGateName;
+var localized string strSettingPsiGateDetails;
+var localized string strSettingStasisSuitName;
+var localized string strSettingStasisSuitDetails;
+var localized string strSettingAvatarCorpseName;
+var localized string strSettingAvatarCorpseDetails;
+
 // MCM version
 var config int CFG_VERSION;
 
@@ -72,34 +105,34 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     
     LoadSavedSettings();
     
-    Page = ConfigAPI.NewSettingsPage("X2WOTC Archipelago");
-    Page.SetPageTitle("XCOM 2 WOTC Archipelago");
+    Page = ConfigAPI.NewSettingsPage(default.strMenuPageTitle);
+    Page.SetPageTitle(default.strSettingsPageTitle);
     Page.SetSaveHandler(SaveButtonClicked);
     
-    GroupGeneral = Page.AddGroup('Group1', "General");
+    GroupGeneral = Page.AddGroup('Group1', default.strGroupGeneralTitle);
 
-	`MCM_API_AddCheckbox(GroupGeneral, DEBUG_LOGGING, "Debug Logging", "Enables debug logging to Launch.log.");
+	`MCM_API_AddCheckbox(GroupGeneral, DEBUG_LOGGING, default.strSettingDebugLoggingName, default.strSettingDebugLoggingDetails);
 
-	`MCM_API_AddSlider(GroupGeneral, PROXY_PORT, "Proxy Port", "Sets the port of the local proxy.", 20028, 25028, 100);
+	`MCM_API_AddSlider(GroupGeneral, PROXY_PORT, default.strSettingProxyPortName, default.strSettingProxyPortDetails, 20028, 25028, 100);
 
-	GroupDuration = Page.AddGroup('Group2', "Reduced Campaign Duration");
+	GroupDuration = Page.AddGroup('Group2', default.strGroupReducedCampaignDuration);
     
-    `MCM_API_AddCheckbox(GroupDuration, SKIP_SUPPLY_RAIDS, "Skip Supply Raids", "Automatically skips supply raids.");
-	`MCM_API_AddCheckbox(GroupDuration, SKIP_COUNCIL_MISSIONS, "Skip Council Missions", "Automatically skips council missions.");
-	`MCM_API_AddCheckbox(GroupDuration, SKIP_FACTION_MISSIONS, "Skip Resistance Ops", "Automatically skips resistance ops.");
+    `MCM_API_AddCheckbox(GroupDuration, SKIP_SUPPLY_RAIDS, default.strSettingSkipSupplyRaidsName, default.strSettingSkipSupplyRaidsDetails);
+	`MCM_API_AddCheckbox(GroupDuration, SKIP_COUNCIL_MISSIONS, default.strSettingSkipCouncilMissionsName, default.strSettingSkipCouncilMissionsDetails);
+	`MCM_API_AddCheckbox(GroupDuration, SKIP_FACTION_MISSIONS, default.strSettingSkipResistanceOpsName, default.strSettingSkipResistanceOpsDetails);
 
-	`MCM_API_AddCheckbox(GroupDuration, DISARM_AMBUSH_RISK, "Disarm Ambush Risk", "Disables effects of covert op ambush risk.");
-	`MCM_API_AddCheckbox(GroupDuration, DISARM_CAPTURE_RISK, "Disarm Capture Risk", "Disables effects of covert op soldier capture risk.");
+	`MCM_API_AddCheckbox(GroupDuration, DISARM_AMBUSH_RISK, default.strSettingDisarmAmbushName, default.strSettingDisarmAmbushDetails);
+	`MCM_API_AddCheckbox(GroupDuration, DISARM_CAPTURE_RISK, default.strSettingDisarmCaptureName, default.strSettingDisarmCaptureDetails);
 
-	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, "Increase XP Gain", "All soldiers passively gain extra XP on missions.", 0.0f, 2.0f, 0.05f);
+	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, default.strSettingIncreaseXPName, default.strSettingIncreaseXPDetails, 0.0f, 2.0f, 0.05f);
 
-	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, "Increase Corpse Gain", "Gain additional corpses for each enemy killed.", 0, 5, 1);
+	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, default.strSettingIncreaseCorpseGainName, default.strSettingIncreaseCorpseGainDetails, 0, 5, 1);
 
-	GroupCompletion = Page.AddGroup('Group3', "Campaign Completion Requirements");
+	GroupCompletion = Page.AddGroup('Group3', default.strGroupCampaignCompletionRequirements);
 
-	`MCM_API_AddCheckbox(GroupCompletion, REQ_PSI_GATE_OBJ, "Require Psi Gate Objective", "Final mission requires completion of psi gate research to unlock.");
-	`MCM_API_AddCheckbox(GroupCompletion, REQ_STASIS_SUIT_OBJ, "Require Stasis Suit Objective", "Final mission requires completion of stasis suit research to unlock.");
-	`MCM_API_AddCheckbox(GroupCompletion, REQ_AVATAR_CORPSE_OBJ, "Require Avatar Corpse Objective", "Final mission requires acquisition of avatar corpse to unlock.");
+	`MCM_API_AddCheckbox(GroupCompletion, REQ_PSI_GATE_OBJ, default.strSettingPsiGateName, default.strSettingPsiGateDetails);
+	`MCM_API_AddCheckbox(GroupCompletion, REQ_STASIS_SUIT_OBJ, default.strSettingStasisSuitName, default.strSettingStasisSuitDetails);
+	`MCM_API_AddCheckbox(GroupCompletion, REQ_AVATAR_CORPSE_OBJ, default.strSettingAvatarCorpseName, default.strSettingAvatarCorpseDetails);
     
     Page.ShowSettings();
 }
