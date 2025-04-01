@@ -3,6 +3,7 @@ strRequestTimedOut="Request Timed Out"
 strRequestTimedOutDetails="Please make sure client and proxy are running on the correct port."
 strClientDisconnected="Client Disconnected"
 strClientDisconnectedDetails="Please connect to the server through the client."
+strDoomTrapMessage="Archipelago Trap"
 strDialogAccept="OK"
 strDramaticMessageTitle="Archipelago"
 

@@ -20,6 +20,7 @@ var localized string strRequestTimedOut;
 var localized string strRequestTimedOutDetails;
 var localized string strClientDisconnected;
 var localized string strClientDisconnectedDetails;
+var localized string strDoomTrapMessage;
 var localized string strDialogAccept;
 var localized string strDramaticMessageTitle;
 
@@ -554,6 +555,7 @@ static private final function TriggerTrap(XComGameState NewGameState, const name
 		// Doom
 		if (TrapName == 'Doom')
 		{
+			`HQPRES.StrategyMap2D.StrategyMapHUD.SetDoomMessage(default.strDoomTrapMessage, false, false);
 			AlienHQ.ModifyDoom();
 		}
 		// Force Level
