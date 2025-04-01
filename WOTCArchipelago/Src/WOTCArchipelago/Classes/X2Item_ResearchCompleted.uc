@@ -6,7 +6,7 @@ struct native ResearchProject
 	var name CompletionItemName;
 };
 
-var config array<ResearchProject> DefaultResearchProjects;
+var config array<ResearchProject> CheckCompleteTechs;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -14,7 +14,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	local ResearchProject			Project;
 	local name						CompletionItemName;
 
-	foreach default.DefaultResearchProjects(Project)
+	foreach default.CheckCompleteTechs(Project)
 	{
 		CompletionItemName = Project.CompletionItemName;
 		if (CompletionItemName == '')

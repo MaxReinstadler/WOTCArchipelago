@@ -6,8 +6,8 @@ struct native CustomGroup
 	var array<name>		Members;
 };
 
-var config array<name>				DefaultKillCharacterGroups;
-var config array<CustomGroup>		DefaultKillCustomGroups;
+var config array<name>				CheckKillDefaultCharacterGroups;
+var config array<CustomGroup>		CheckKillCustomCharacterGroups;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -64,12 +64,12 @@ static private function SendEnemyKillCheck(XComGameState NewGameState, XComGameS
 	CharacterTemplateName = EnemyState.GetMyTemplateName();
 	CharacterGroupName = EnemyState.GetMyTemplateGroupName();
 
-	// Check Default Kill Character Groups
-	if (default.DefaultKillCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
+	// Check Default Character Groups
+	if (default.CheckKillDefaultCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
 		`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ CharacterGroupName));
 
-	// Check Default Kill Custom Groups
-	foreach default.DefaultKillCustomGroups(Group)
+	// Check Custom Character Groups
+	foreach default.CheckKillCustomCharacterGroups(Group)
 	{
 		if (Group.Members.Find(CharacterTemplateName) != INDEX_NONE)
 			`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ Group.GroupName));
