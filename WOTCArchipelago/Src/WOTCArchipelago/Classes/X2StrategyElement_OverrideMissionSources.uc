@@ -1,6 +1,13 @@
 // Helper class for overriding mission source functionality (NOT an MCO)
 class X2StrategyElement_OverrideMissionSources extends X2StrategyElement_XpackMissionSources;
 
+var localized string strSkippedSupplyRaid;
+var localized string strSkippedCouncilMission;
+var localized string strSkippedResistanceOp;
+var localized string strSkippedRewardCollection;
+var localized string strPreventedAmbush;
+var localized string strPreventedCapture;
+var localized string strPreventionQuip;
 
 // SPAWN OVERRIDE FUNCTIONS
 
@@ -55,8 +62,8 @@ static function SpawnSupplyRaidMission_Override(XComGameState NewGameState, int 
 		// Show custom skip mission popup
 		APClient = `APCLIENT;
 		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = "Skipped Supply Raid";
-		APClient.CustomPopupText = "Rewards were collected automatically.";
+		APClient.CustomPopupTitle = default.strSkippedSupplyRaid;
+		APClient.CustomPopupText = default.strSkippedRewardCollection;
 	}
 	else
 	{
@@ -125,8 +132,8 @@ static function SpawnCouncilMission_Override(XComGameState NewGameState, int Mis
 		// Show custom skip mission popup
 		APClient = `APCLIENT;
 		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = "Skipped Council Mission";
-		APClient.CustomPopupText = "Rewards were collected automatically.";
+		APClient.CustomPopupTitle = default.strSkippedCouncilMission;
+		APClient.CustomPopupText = default.strSkippedRewardCollection;
 	}
 	else
 	{
@@ -172,8 +179,8 @@ static function SpawnResOpMission_Override(XComGameState NewGameState, int Missi
 		// Show custom skip mission popup
 		APClient = `APCLIENT;
 		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = "Skipped Resistance Op";
-		APClient.CustomPopupText = "Rewards were collected automatically.";
+		APClient.CustomPopupTitle = default.strSkippedResistanceOp;
+		APClient.CustomPopupText = default.strSkippedRewardCollection;
 	}
 	else
 	{
@@ -244,8 +251,8 @@ static function CreateAmbushMission_Override(XComGameState NewGameState, XComGam
 		// Show custom disarm risk popup
 		APClient = `APCLIENT;
 		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = "Prevented Ambush";
-		APClient.CustomPopupText = "You're welcome.";
+		APClient.CustomPopupTitle = default.strPreventedAmbush;
+		APClient.CustomPopupText = default.strPreventionQuip;
 
 		return;
 	}
@@ -288,8 +295,8 @@ static function ApplySoldierCaptured_Override(XComGameState NewGameState, XComGa
 		// Show custom disarm risk popup
 		APClient = `APCLIENT;
 		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = "Prevented Soldier Capture";
-		APClient.CustomPopupText = "You're welcome.";
+		APClient.CustomPopupTitle = default.strPreventedCapture;
+		APClient.CustomPopupText = default.strPreventionQuip;
 
 		return;
 	}

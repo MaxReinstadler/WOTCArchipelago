@@ -1,2 +1,50 @@
-; [Help]
-; SomeString = "localized_value"
+[WOTCArchipelago_APClient]
+strRequestTimedOut="Request Timed Out"
+strRequestTimedOutDetails="Please make sure client and proxy are running on the correct port."
+strClientDisconnected="Client Disconnected"
+strClientDisconnectedDetails="Please connect to the server through the client."
+strDialogAccept="OK"
+strDramaticMessageTitle="Archipelago"
+
+[WOTCArchipelago_MCMListener]
+strMenuPageTitle="X2WOTC Archipelago"
+strSettingsPageTitle="XCOM 2 WOTC Archipelago"
+
+strGroupGeneralTitle="General"
+strSettingDebugLoggingName="Debug Logging"
+strSettingDebugLoggingDetails="Enables debug logging to Launch.log."
+strSettingProxyPortName="Proxy Port"
+strSettingProxyPortDetails="Sets the port of the local proxy."
+
+strGroupReducedCampaignDuration="Reduced Campaign Duration"
+strSettingSkipSupplyRaidsName="Skip Supply Raids"
+strSettingSkipSupplyRaidsDetails="Automatically skips supply raids."
+strSettingSkipCouncilMissionsName="Skip Council Missions"
+strSettingSkipCouncilMissionsDetails="Automatically skips council missions."
+strSettingSkipResistanceOpsName="Skip Resistance Ops"
+strSettingSkipResistanceOpsDetails="Automatically skips resistance ops."
+strSettingDisarmAmbushName="Disarm Ambush Risk"
+strSettingDisarmAmbushDetails="Disables effects of covert op ambush risk."
+strSettingDisarmCaptureName="Disarm Capture Risk"
+strSettingDisarmCaptureDetails="Disables effects of covert op soldier capture risk."
+strSettingIncreaseXPName="Increase XP Gain"
+strSettingIncreaseXPDetails="All soldiers passively gain extra XP on missions."
+strSettingIncreaseCorpseGainName="Increase Corpse Gain"
+strSettingIncreaseCorpseGainDetails="Gain additional corpses for each enemy killed."
+
+strGroupCampaignCompletionRequirements="Campaign Completion Requirements"
+strSettingPsiGateName="Require Psi Gate Objective"
+strSettingPsiGateDetails="Final mission requires completion of psi gate research to unlock."
+strSettingStasisSuitName="Require Stasis Suit Objective"
+strSettingStasisSuitDetails="Final mission requires completion of stasis suit research to unlock."
+strSettingAvatarCorpseName="Require Avatar Corpse Objective"
+strSettingAvatarCorpseDetails="Final mission requires acquisition of avatar corpse to unlock."
+
+[X2StrategyElement_OverrideMissionSources]
+strSkippedSupplyRaid="Supply Raid Skipped"
+strSkippedCouncilMission="Skipped Council Mission"
+strSkippedResistanceOp="Skipped Resistance Op"
+strSkippedRewardCollection="Rewards were collected automatically."
+strPreventedAmbush="Prevented Ambush"
+strPreventedCapture="Prevented Soldier Capture"
+strPreventionQuip="You're welcome."
