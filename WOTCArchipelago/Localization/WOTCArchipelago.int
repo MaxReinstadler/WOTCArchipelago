@@ -41,7 +41,7 @@ strSettingAvatarCorpseName="Require Avatar Corpse Objective"
 strSettingAvatarCorpseDetails="Final mission requires acquisition of avatar corpse to unlock."
 
 [X2StrategyElement_OverrideMissionSources]
-strSkippedSupplyRaid="Supply Raid Skipped"
+strSkippedSupplyRaid="Skipped Supply Raid"
 strSkippedCouncilMission="Skipped Council Mission"
 strSkippedResistanceOp="Skipped Resistance Op"
 strSkippedRewardCollection="Rewards were collected automatically."
