@@ -1,6 +1,7 @@
 // See the Community Highlander's X2WOTCCH_UIScreenListener_ShellSplash.uc
-
 class WOTCArchipelago_UISL_ShellSplash extends UIScreenListener;
+
+var const string ModVersion;
 
 event OnInit(UIScreen Screen)
 {
@@ -22,8 +23,13 @@ function RealizeVersionText(UIShell ShellScreen)
 	if (VersionText == none)
 	{
 		VersionText = ShellScreen.Spawn(class'UIText', ShellScreen);
-		VersionText.InitText('APVersionText', "WOTCArchipelago 0.7.3");
+		VersionText.InitText('APVersionText', default.ModVersion);
 		VersionText.AnchorBottomLeft();
 		VersionText.SetY(-ShellScreen.TickerHeight + 10);
 	}
+}
+
+DefaultProperties
+{
+	ModVersion="WOTCArchipelago 0.7.3"
 }

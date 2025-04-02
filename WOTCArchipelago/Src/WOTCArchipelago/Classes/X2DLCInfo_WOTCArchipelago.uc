@@ -20,6 +20,8 @@ delegate ModifyTemplate(X2DataTemplate DataTemplate);
 
 static event OnPostTemplatesCreated()
 {
+	`AMLOG(class'WOTCArchipelago_UISL_ShellSplash'.default.ModVersion);
+
 	// Patch research projects to alter effects upon completion
 	`AMLOG("Patching Research Project Templates");
 	IterateTemplatesAllDiff(class'X2TechTemplate', PatchResearchTemplates);
