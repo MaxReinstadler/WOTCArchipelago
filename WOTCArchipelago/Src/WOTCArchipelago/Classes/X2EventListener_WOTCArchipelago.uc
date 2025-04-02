@@ -42,26 +42,28 @@ static protected function EventListenerReturn OnUnitDied(Object EventData, Objec
 	UnitState = XComGameState_Unit(EventData);
 	if (UnitState == none) return ELR_NoInterrupt;
 
-	if (UnitState.GetTeam() == eTeam_Alien || UnitState.GetTeam() == eTeam_TheLost) OnEnemyDied(NewGameState, UnitState);
+	SendUnitKillCheck(NewGameState, UnitState);
+
+	if (UnitState.GetTeam() == eTeam_Alien || UnitState.GetTeam() == eTeam_TheLost)
+		OnEnemyDied(NewGameState, UnitState);
 
 	return ELR_NoInterrupt;
 }
 
 static private function OnEnemyDied(XComGameState NewGameState, XComGameState_Unit EnemyState)
 {
-	SendEnemyKillCheck(NewGameState, EnemyState);
 	DistributeExtraXP(NewGameState, EnemyState);
 	GiveExtraCorpses(NewGameState, EnemyState);
 }
 
-static private function SendEnemyKillCheck(XComGameState NewGameState, XComGameState_Unit EnemyState)
+static private function SendUnitKillCheck(XComGameState NewGameState, XComGameState_Unit UnitState)
 {
 	local name				CharacterTemplateName;
 	local name				CharacterGroupName;
 	local CustomGroup		Group;
 
-	CharacterTemplateName = EnemyState.GetMyTemplateName();
-	CharacterGroupName = EnemyState.GetMyTemplateGroupName();
+	CharacterTemplateName = UnitState.GetMyTemplateName();
+	CharacterGroupName = UnitState.GetMyTemplateGroupName();
 
 	// Check Default Character Groups
 	if (default.CheckKillDefaultCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
