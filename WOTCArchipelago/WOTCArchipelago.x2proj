@@ -14,8 +14,6 @@
     <Folder Include="Config\Base\" />
     <Folder Include="Localization\" />
     <Folder Include="Src\" />
-    <Folder Include="Content\" />
-    <Folder Include="ContentForCook\" />
     <Folder Include="Src\WOTCArchipelago\" />
     <Folder Include="Src\WOTCArchipelago\Classes\" />
     <Folder Include="Src\ModConfigMenuAPI" />
@@ -33,13 +31,9 @@
     </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
-    <Content Include="ContentOptions.json" />
     <Content Include="Config\Base\XComEditor.ini" />
     <Content Include="Config\Base\XComEngine.ini" />
     <Content Include="Config\Base\XComGame.ini" />
-    <Content Include="Config\XComTemplateCreator.ini" />
-    <Content Include="Config\XComTemplateEditor.ini" />
-    <Content Include="Localization\XComGame.int" />
     <Content Include="Localization\WOTCArchipelago.int" />
     <Content Include="Src\extra_globals.uci" />
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_MCMListener.uc">
@@ -73,8 +67,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTCArchipelago\Classes\X2DLCInfo_WOTCArchipelago.uc" />
-    <Content Include="Src\WOTCArchipelago\Classes\Help.uc" />
-    <Content Include="Src\WOTCArchipelago\Classes\ConfigEngine.uc" />
     <Content Include="Src\WOTCArchipelago\Classes\X2StrategyElement_APRewards.uc">
       <SubType>Content</SubType>
     </Content>
