@@ -41,6 +41,10 @@ strSettingStasisSuitDetails="Final mission requires completion of stasis suit re
 strSettingAvatarCorpseName="Require Avatar Corpse Objective"
 strSettingAvatarCorpseDetails="Final mission requires acquisition of avatar corpse to unlock."
 
+strGroupMiscellaneous="Miscellaneous"
+strSettingDisableDayOneTrapsName="Disable Day One Traps"
+strSettingDisableDayOneTrapsDetails="Traps have no effect when received on the first day of a campaign."
+
 [X2StrategyElement_OverrideMissionSources]
 strSkippedSupplyRaid="Skipped Supply Raid"
 strSkippedCouncilMission="Skipped Council Mission"

@@ -29,6 +29,9 @@ var config bool CFG_REQ_PSI_GATE_OBJ;
 var config bool CFG_REQ_STASIS_SUIT_OBJ;
 var config bool CFG_REQ_AVATAR_CORPSE_OBJ;
 
+// Disable day 1 traps
+var config bool CFG_NO_STARTING_TRAPS;
+
 var localized string strMenuPageTitle;
 var localized string strSettingsPageTitle;
 
@@ -62,6 +65,10 @@ var localized string strSettingStasisSuitDetails;
 var localized string strSettingAvatarCorpseName;
 var localized string strSettingAvatarCorpseDetails;
 
+var localized string strGroupMiscellaneous;
+var localized string strSettingDisableDayOneTrapsName;
+var localized string strSettingDisableDayOneTrapsDetails;
+
 // MCM version
 var config int CFG_VERSION;
 
@@ -80,6 +87,8 @@ var config int CFG_VERSION;
 `MCM_API_FloatSliderFns(EXTRA_XP_MULT)
 
 `MCM_API_SliderFns(EXTRA_CORPSES)
+
+`MCM_API_CheckboxFns(NO_STARTING_TRAPS)
 
 `MCM_API_CheckboxFns(REQ_PSI_GATE_OBJ)
 `MCM_API_CheckboxFns(REQ_STASIS_SUIT_OBJ)
@@ -102,6 +111,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     local MCM_API_SettingsGroup GroupGeneral;
 	local MCM_API_SettingsGroup GroupDuration;
 	local MCM_API_SettingsGroup GroupCompletion;
+	local MCM_API_SettingsGroup GroupMiscellaneous;
     
     LoadSavedSettings();
     
@@ -133,6 +143,10 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AddCheckbox(GroupCompletion, REQ_PSI_GATE_OBJ, default.strSettingPsiGateName, default.strSettingPsiGateDetails);
 	`MCM_API_AddCheckbox(GroupCompletion, REQ_STASIS_SUIT_OBJ, default.strSettingStasisSuitName, default.strSettingStasisSuitDetails);
 	`MCM_API_AddCheckbox(GroupCompletion, REQ_AVATAR_CORPSE_OBJ, default.strSettingAvatarCorpseName, default.strSettingAvatarCorpseDetails);
+
+	GroupMiscellaneous = Page.AddGroup('Group4', default.strGroupMiscellaneous);
+
+	`MCM_API_ADDCheckbox(GroupMiscellaneous, NO_STARTING_TRAPS, default.strSettingDisableDayOneTrapsName, default.strSettingDisableDayOneTrapsDetails);
     
     Page.ShowSettings();
 }
@@ -157,6 +171,8 @@ simulated function LoadSavedSettings()
 	CFG_REQ_PSI_GATE_OBJ = `APCFG(REQ_PSI_GATE_OBJ);
 	CFG_REQ_STASIS_SUIT_OBJ = `APCFG(REQ_STASIS_SUIT_OBJ);
 	CFG_REQ_AVATAR_CORPSE_OBJ = `APCFG(REQ_AVATAR_CORPSE_OBJ);
+
+	CFG_NO_STARTING_TRAPS = `APCFG(NO_STARTING_TRAPS);
 }
 
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)

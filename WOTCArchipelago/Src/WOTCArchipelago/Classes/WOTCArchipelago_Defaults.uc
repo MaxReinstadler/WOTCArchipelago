@@ -27,5 +27,8 @@ var config bool DEF_REQ_PSI_GATE_OBJ;
 var config bool DEF_REQ_STASIS_SUIT_OBJ;
 var config bool DEF_REQ_AVATAR_CORPSE_OBJ;
 
+// Disable day 1 traps
+var config bool DEF_NO_STARTING_TRAPS;
+
 // MCM version
 var config int DEF_VERSION;

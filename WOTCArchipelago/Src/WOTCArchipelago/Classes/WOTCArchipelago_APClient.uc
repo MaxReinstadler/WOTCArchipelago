@@ -544,9 +544,9 @@ static private final function TriggerTrap(XComGameState NewGameState, const name
 	local int								MaxForceLevel;
 	local int								Idx;
 
-	// Ignore traps on the first day
+	// Ignore traps on the first day if the setting is active
 	if (class'X2StrategyGameRulesetDataStructures'.static.IsFirstDay(class'XComGameState_GeoscapeEntity'.static.GetCurrentTime()))
-		return;
+		if (`APCFG(NO_STARTING_TRAPS)) return;
 
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
 	AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
