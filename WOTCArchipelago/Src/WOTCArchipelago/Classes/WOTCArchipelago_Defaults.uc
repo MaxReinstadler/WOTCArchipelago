@@ -16,6 +16,10 @@ var config bool DEF_SKIP_FACTION_MISSIONS;
 var config bool DEF_DISARM_AMBUSH_RISK;
 var config bool DEF_DISARM_CAPTURE_RISK;
 
+// Skipped supply raid rewards
+var config float DEF_SKIP_RAID_REWARD_MULT_BASE;
+var config float DEF_SKIP_RAID_REWARD_MULT_ERR;
+
 // Increase XP gain
 var config float DEF_EXTRA_XP_MULT;
 

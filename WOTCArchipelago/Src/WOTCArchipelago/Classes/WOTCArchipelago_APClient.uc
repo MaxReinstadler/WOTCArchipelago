@@ -1,6 +1,9 @@
 class WOTCArchipelago_APClient extends Actor
 		dependson(WOTCArchipelago_TcpLink);
 
+var array<name> AddItemNames;
+var array<int> AddItemQuantities;
+
 var bool bShowCustomPopup;
 var string CustomPopupTitle;
 var string CustomPopupText;
@@ -122,6 +125,9 @@ function Update()
 {
 	local WOTCArchipelago_TcpLink Link;
 
+	// Handle add item
+	if (AddItemNames.Length > 0) HandleAddItem();
+
 	// Handle custom popup
 	if (bShowCustomPopup)
 	{
@@ -152,6 +158,30 @@ function Update()
 		Link = Spawn(class'WOTCArchipelago_TcpLink');
 		Link.Call("/Tick/Tactical/" $ `APCTRREAD('ItemsReceivedTactical'), TickTacticalResponseHandler, TickErrorHandler);
 	}
+}
+
+private final function HandleAddItem()
+{
+	local XComGameState		NewGameState;
+	local int				Idx;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding items to HQ inventory");
+
+	for (Idx = 0; Idx < AddItemNames.Length; Idx++)
+	{
+		if (AddItemQuantities.Length <= Idx)
+		{
+			`AMLOG("Too few quantities given for add item");
+			AddItemQuantities.AddItem(1);
+		}
+
+		AddItemToHQInventory(NewGameState, AddItemNames[Idx], AddItemQuantities[Idx]);
+	}
+	
+	`GAMERULES.SubmitGameState(NewGameState);
+
+	AddItemNames.Length = 0;
+	AddItemQuantities.Length = 0;
 }
 
 private final function HandleObjectiveCompletion()

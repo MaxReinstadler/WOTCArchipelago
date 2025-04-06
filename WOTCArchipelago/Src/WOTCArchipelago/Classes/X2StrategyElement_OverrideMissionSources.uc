@@ -1,5 +1,10 @@
 // Helper class for overriding mission source functionality (NOT an MCO)
-class X2StrategyElement_OverrideMissionSources extends X2StrategyElement_XpackMissionSources;
+class X2StrategyElement_OverrideMissionSources extends X2StrategyElement_XpackMissionSources config(WOTCArchipelago);
+
+var config int SupplyRaidSkipMaxSupplies;
+var config int SupplyRaidSkipMaxAlloys;
+var config int SupplyRaidSkipMaxElerium;
+var config int SupplyRaidSkipMaxCores;
 
 var localized string strSkippedSupplyRaid;
 var localized string strSkippedCouncilMission;
@@ -56,6 +61,7 @@ static function SpawnSupplyRaidMission_Override(XComGameState NewGameState, int 
 	if (`APCFG(SKIP_SUPPLY_RAIDS))
 	{
 		// Skip mission
+		GiveSupplyRaidSkipRewards();
 		SkipMission(NewGameState, MissionState);
 		`AMLOG("Skipped Supply Raid Mission");
 
@@ -469,4 +475,31 @@ static private function AddTacticalTagToRewardUnit(XComGameState NewGameState, X
 	{
 		UnitState.TacticalTag = TacticalTag;
 	}
+}
+
+static private function GiveSupplyRaidSkipRewards()
+{
+	local WOTCArchipelago_APClient APClient;
+
+	APClient = `APCLIENT;
+
+	APClient.AddItemNames.AddItem('Supplies');
+	APClient.AddItemQuantities.AddItem(GetRandomAmount(default.SupplyRaidSkipMaxSupplies));
+
+	APClient.AddItemNames.AddItem('AlienAlloy');
+	APClient.AddItemQuantities.AddItem(GetRandomAmount(default.SupplyRaidSkipMaxAlloys));
+
+	APClient.AddItemNames.AddItem('EleriumDust');
+	APClient.AddItemQuantities.AddItem(GetRandomAmount(default.SupplyRaidSkipMaxElerium));
+
+	APClient.AddItemNames.AddItem('EleriumCore');
+	APClient.AddItemQuantities.AddItem(GetRandomAmount(default.SupplyRaidSkipMaxCores));
+}
+
+static private function int GetRandomAmount(int MaxAmount)
+{
+	local float Mult;
+
+	Mult = `APCFG(SKIP_RAID_REWARD_MULT_BASE) + `APCFG(SKIP_RAID_REWARD_MULT_ERR) * (2.0 * `SYNC_FRAND_STATIC() - 1.0);
+	return Clamp(MaxAmount * Mult, 0, MaxAmount);
 }

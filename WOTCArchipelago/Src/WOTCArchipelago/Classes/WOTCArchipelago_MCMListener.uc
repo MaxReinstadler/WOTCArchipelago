@@ -18,6 +18,10 @@ var config bool CFG_SKIP_FACTION_MISSIONS;
 var config bool CFG_DISARM_AMBUSH_RISK;
 var config bool CFG_DISARM_CAPTURE_RISK;
 
+// Skipped supply raid rewards
+var config float CFG_SKIP_RAID_REWARD_MULT_BASE;
+var config float CFG_SKIP_RAID_REWARD_MULT_ERR;
+
 // Increase XP gain
 var config float CFG_EXTRA_XP_MULT;
 
@@ -52,6 +56,10 @@ var localized string strSettingDisarmAmbushName;
 var localized string strSettingDisarmAmbushDetails;
 var localized string strSettingDisarmCaptureName;
 var localized string strSettingDisarmCaptureDetails;
+var localized string strSettingSkipRaidRewardMultBaseName;
+var localized string strSettingSkipRaidRewardMultBaseDetails;
+var localized string strSettingSkipRaidRewardMultErrName;
+var localized string strSettingSkipRaidRewardMultErrDetails;
 var localized string strSettingIncreaseXPName;
 var localized string strSettingIncreaseXPDetails;
 var localized string strSettingIncreaseCorpseGainName;
@@ -83,6 +91,9 @@ var config int CFG_VERSION;
 
 `MCM_API_CheckboxFns(DISARM_AMBUSH_RISK)
 `MCM_API_CheckboxFns(DISARM_CAPTURE_RISK)
+
+`MCM_API_FloatSliderFns(SKIP_RAID_REWARD_MULT_BASE)
+`MCM_API_FloatSliderFns(SKIP_RAID_REWARD_MULT_ERR)
 
 `MCM_API_FloatSliderFns(EXTRA_XP_MULT)
 
@@ -134,6 +145,9 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AddCheckbox(GroupDuration, DISARM_AMBUSH_RISK, default.strSettingDisarmAmbushName, default.strSettingDisarmAmbushDetails);
 	`MCM_API_AddCheckbox(GroupDuration, DISARM_CAPTURE_RISK, default.strSettingDisarmCaptureName, default.strSettingDisarmCaptureDetails);
 
+	`MCM_API_AddSlider(GroupDuration, SKIP_RAID_REWARD_MULT_BASE, default.strSettingSkipRaidRewardMultBaseName, default.strSettingSkipRaidRewardMultBaseDetails, 0.0f, 1.0f, 0.05f);
+	`MCM_API_AddSlider(GroupDuration, SKIP_RAID_REWARD_MULT_ERR, default.strSettingSkipRaidRewardMultErrName, default.strSettingSkipRaidRewardMultErrDetails, 0.0f, 1.0f, 0.05f);
+
 	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, default.strSettingIncreaseXPName, default.strSettingIncreaseXPDetails, 0.0f, 2.0f, 0.05f);
 
 	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, default.strSettingIncreaseCorpseGainName, default.strSettingIncreaseCorpseGainDetails, 0, 5, 1);
@@ -163,6 +177,9 @@ simulated function LoadSavedSettings()
 
 	CFG_DISARM_AMBUSH_RISK = `APCFG(DISARM_AMBUSH_RISK);
 	CFG_DISARM_CAPTURE_RISK = `APCFG(DISARM_CAPTURE_RISK);
+
+	CFG_SKIP_RAID_REWARD_MULT_BASE = `APCFG(SKIP_RAID_REWARD_MULT_BASE);
+	CFG_SKIP_RAID_REWARD_MULT_ERR = `APCFG(SKIP_RAID_REWARD_MULT_ERR);
 
 	CFG_EXTRA_XP_MULT = `APCFG(EXTRA_XP_MULT);
 
