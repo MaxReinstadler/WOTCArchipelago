@@ -26,9 +26,14 @@
 
 `define MCM_API_Getter(VAR, TYPE) static function `{TYPE} get`{VAR} () { return `MCM_CH_GetValue(`{MCM_DEFAULT}`{VAR}, `{MCM_CONFIG}`{VAR}); }
 
-`define MCM_API_CheckboxFns(VAR) `MCM_API_BasicCheckboxSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, bool)
-`define MCM_API_SliderFns(VAR) `MCM_API_BasicSliderSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, int)
-`define MCM_API_FloatSliderFns(VAR) `MCM_API_BasicSliderSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, float)
+`define MCM_API_CheckboxVars(VAR) var config bool CFG_`{VAR}; var localized string `{VAR}_LABEL; var localized string `{VAR}_DESC; var MCM_API_Checkbox `{VAR}_UI;
+`define MCM_API_SliderVars(VAR, TYPE) var config `{TYPE} CFG_`{VAR}; var localized string `{VAR}_LABEL; var localized string `{VAR}_DESC; var MCM_API_Slider `{VAR}_UI;
 
-`define MCM_API_AddCheckbox(GROUP, VAR, LABEL, DESC) `{GROUP}.AddCheckbox('`{VAR}', `{LABEL}, `{DESC}, CFG_`{VAR}, `{VAR}_SaveHandler)
-`define MCM_API_AddSlider(GROUP, VAR, LABEL, DESC, MIN, MAX, STEP) `{GROUP}.AddSlider('`{VAR}', `{LABEL}, `{DESC}, `MIN, `MAX, `STEP, CFG_`{VAR}, `{VAR}_SaveHandler)
+`define MCM_API_CheckboxFns(VAR) `MCM_API_BasicCheckboxSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, bool)
+`define MCM_API_SliderFns(VAR, TYPE) `MCM_API_BasicSliderSaveHandler(`{VAR}_SaveHandler, CFG_`{VAR}) `MCM_API_Getter(`{VAR}, `{TYPE})
+
+`define MCM_API_AddCheckbox(GROUP, VAR) `{VAR}_UI = `{GROUP}.AddCheckbox('`{VAR}', default.`{VAR}_LABEL, default.`{VAR}_DESC, CFG_`{VAR}, `{VAR}_SaveHandler)
+`define MCM_API_AddSlider(GROUP, VAR, MIN, MAX, STEP) `{VAR}_UI = `{GROUP}.AddSlider('`{VAR}', default.`{VAR}_LABEL, default.`{VAR}_DESC, `MIN, `MAX, `STEP, CFG_`{VAR}, `{VAR}_SaveHandler)
+
+`define MCM_API_LoadSetting(VAR) CFG_`{VAR} = `APCFG(`{VAR})
+`define MCM_API_RestoreDefault(VAR) `{VAR}_UI.SetValue(`{MCM_DEFAULT}`{VAR}, false)
