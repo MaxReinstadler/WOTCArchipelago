@@ -20,7 +20,7 @@
 // Own additions
 
 `define MCM_DEFAULT class'WOTCArchipelago_Defaults'.default.DEF_
-`define MCM_CONFIG class'WOTCArchipelago_MCMListener'.default.CFG_
+`define MCM_CONFIG class'WOTCArchipelago_MCMScreen'.default.CFG_
 
 `define MCM_API_VersionChecker(VER) `MCM_CH_VersionChecker(`{MCM_DEFAULT}`{VER}, `{MCM_CONFIG}`{VER})
 

@@ -7,7 +7,7 @@ strDoomTrapMessage="Archipelago Trap"
 strDialogAccept="OK"
 strDramaticMessageTitle="Archipelago"
 
-[WOTCArchipelago_MCMListener]
+[WOTCArchipelago_MCMScreen]
 strMenuPageTitle="X2WOTC Archipelago"
 strSettingsPageTitle="XCOM 2 WOTC Archipelago"
 
