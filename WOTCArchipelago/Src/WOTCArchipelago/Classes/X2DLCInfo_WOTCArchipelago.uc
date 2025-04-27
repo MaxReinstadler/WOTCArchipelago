@@ -71,24 +71,11 @@ static event OnPostTemplatesCreated()
 static private function PatchResearchTemplates(X2DataTemplate DataTemplate)
 {
 	local X2TechTemplate				TechTemplate;
-	local name							TechTemplateName;
 	local X2CompletionItemTemplate		CompletionItemTemplate;
 
     TechTemplate = X2TechTemplate(DataTemplate);
-	TechTemplateName = TechTemplate.DataName;
-
-	// Ignore random or repeatable projects
-	if (TechTemplate.bBreakthrough) return;
-	if (TechTemplate.bProvingGround) return;
-	if (TechTemplate.bRepeatable) return;
-
-	CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(TechTemplateName);
-
-	if (CompletionItemTemplate == none)
-	{
-		`ERROR("No CompletionItemTemplate for " $ TechTemplateName);
-		return;
-	}
+	CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(TechTemplate.DataName);
+	if (CompletionItemTemplate == none) return;
 
 	// Replace completion delegate
 	CompletionItemTemplate.AssociatedTechDelegate = TechTemplate.ResearchCompletedFn;
@@ -97,7 +84,7 @@ static private function PatchResearchTemplates(X2DataTemplate DataTemplate)
 	// Enable pop-ups for AlienBiotech and AutopsyAdventOfficer
 	TechTemplate.bJumpToLabs = false;
 
-	`AMLOG("Patched " $ TechTemplate.Name);
+	`AMLOG("Patched " $ TechTemplate.Name $ " (" $ CompletionItemTemplate.DataName $ ")");
 }
 
 // Handle research completions as Archipelago checks
@@ -131,6 +118,8 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 	local array<name>					RequiredTechs;
 	local name							ReqTechTemplateName;
 	local X2CompletionItemTemplate		CompletionItemTemplate;
+	local name							CompletionItemTemplateName;
+	local bool							bPatched;
 
 	ItemTemplate = X2ItemTemplate(DataTemplate);
 
@@ -143,23 +132,22 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 		RequiredTechs = Requirements.RequiredTechs;
 		foreach RequiredTechs(ReqTechTemplateName)
 		{
-			`AMLOG("Attempting to replace Tech Requirement: " $ ReqTechTemplateName);
-
 			CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(ReqTechTemplateName);
-
 			if (CompletionItemTemplate == none) continue;
+			CompletionItemTemplateName = CompletionItemTemplate.DataName;
 		
-			Requirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
+			Requirements.RequiredItems.AddItem(CompletionItemTemplateName);
 			Requirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
 
-			`AMLOG("Replaced with Item Requirement: " $ CompletionItemTemplate.DataName);
+			`AMLOG(ReqTechTemplateName $ " -> " $ CompletionItemTemplateName);
+			bPatched = true;
 		}
 
 		if (Idx == -1) ItemTemplate.Requirements = Requirements;
 		else ItemTemplate.AlternateRequirements[Idx] = Requirements;
 	}
 
-	`AMLOG("Patched " $ ItemTemplate.Name);
+	if (bPatched) `AMLOG("Patched " $ ItemTemplate.Name);
 }
 
 // Patch strategy elements to alter unlock/completion requirements
@@ -173,6 +161,8 @@ static private function PatchStrategyElementTemplates(X2DataTemplate DataTemplat
 	local array<name>					RequiredTechs;
 	local name							ReqTechTemplateName;
 	local X2CompletionItemTemplate		CompletionItemTemplate;
+	local name							CompletionItemTemplateName;
+	local bool							bPatched;
 
 	// Filter by class
 	if (ClassIsChildOf(DataTemplate.Class, class'X2FacilityTemplate'))
@@ -209,33 +199,32 @@ static private function PatchStrategyElementTemplates(X2DataTemplate DataTemplat
 	RequiredTechs = Requirements.RequiredTechs;
 	foreach RequiredTechs(ReqTechTemplateName)
 	{
-		`AMLOG("Attempting to replace Tech Requirement: " $ ReqTechTemplateName);
-
 		CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(ReqTechTemplateName);
-
 		if (CompletionItemTemplate == none) continue;
+		CompletionItemTemplateName = CompletionItemTemplate.DataName;
 		
 		// Filter by class
 		if (ClassIsChildOf(DataTemplate.Class, class'X2FacilityTemplate'))
 		{
-			FacilityTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
+			FacilityTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplateName);
 			FacilityTemplate.Requirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
 		}
 		else if (ClassIsChildOf(DataTemplate.Class, class'X2FacilityUpgradeTemplate'))
 		{
-			FacilityUpgradeTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
+			FacilityUpgradeTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplateName);
 			FacilityUpgradeTemplate.Requirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
 		}
 		else if (ClassIsChildOf(DataTemplate.Class, class'X2ObjectiveTemplate'))
 		{
-			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
+			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem(CompletionItemTemplateName);
 			ObjectiveTemplate.CompletionRequirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
 		}
 
-		`AMLOG("Replaced with Item Requirement: " $ CompletionItemTemplate.DataName);
+		`AMLOG(ReqTechTemplateName $ " -> " $ CompletionItemTemplateName);
+		bPatched = true;
 	}
 
-	`AMLOG("Patched " $ DataTemplate.Name);
+	if (bPatched) `AMLOG("Patched " $ DataTemplate.Name);
 }
 
 // Patch proving ground projects to alter unlock requirements
@@ -246,6 +235,8 @@ static private function PatchProvingGroundTemplates(X2DataTemplate DataTemplate)
 	local array<name>					RequiredTechs;
 	local name							ReqTechTemplateName;
 	local X2CompletionItemTemplate		CompletionItemTemplate;
+	local name							CompletionItemTemplateName;
+	local bool							bPatched;
 
 	TechTemplate = X2TechTemplate(DataTemplate);
 	if (!TechTemplate.bProvingGround) return;
@@ -255,19 +246,18 @@ static private function PatchProvingGroundTemplates(X2DataTemplate DataTemplate)
 	RequiredTechs = Requirements.RequiredTechs;
 	foreach RequiredTechs(ReqTechTemplateName)
 	{
-		`AMLOG("Attempting to replace Tech Requirement: " $ ReqTechTemplateName);
-
 		CompletionItemTemplate = class'X2CompletionItemTemplate'.static.GetCompletionItemTemplate(ReqTechTemplateName);
-
 		if (CompletionItemTemplate == none) continue;
+		CompletionItemTemplateName = CompletionItemTemplate.DataName;
 		
-		TechTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplate.DataName);
+		TechTemplate.Requirements.RequiredItems.AddItem(CompletionItemTemplateName);
 		TechTemplate.Requirements.RequiredTechs.RemoveItem(ReqTechTemplateName);
 
-		`AMLOG("Replaced with Item Requirement: " $ CompletionItemTemplate.DataName);
+		`AMLOG(ReqTechTemplateName $ " -> " $ CompletionItemTemplateName);
+		bPatched = true;
 	}
 
-	`AMLOG("Patched " $ TechTemplate.Name);
+	if (bPatched) `AMLOG("Patched " $ TechTemplate.Name);
 }
 
 // Patch mission source templates to disable some optional mission types

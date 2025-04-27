@@ -23,8 +23,6 @@ static function X2CompletionItemTemplate GetCompletionItemTemplate(name Template
 		CompletionItemTemplate = X2CompletionItemTemplate(IterateTemplate);
 		if (CompletionItemTemplate.AssociatedTemplateName == TemplateName) return CompletionItemTemplate;
 	}
-
-	`AMLOG("No match for Template " $ TemplateName);
 }
 
 DefaultProperties
