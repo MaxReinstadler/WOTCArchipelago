@@ -31,5 +31,5 @@ function RealizeVersionText(UIShell ShellScreen)
 
 DefaultProperties
 {
-	ModVersion="WOTCArchipelago 0.8.0"
+	ModVersion="WOTCArchipelago 0.8.1"
 }
