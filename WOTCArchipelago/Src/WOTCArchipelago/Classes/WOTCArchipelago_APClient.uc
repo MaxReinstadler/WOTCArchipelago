@@ -271,6 +271,15 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 	{
 		Message = Messages[ItemNr];
 		
+		// Check for integer message
+		if (Message == string(int(Message)))
+		{
+			// Abort if state is mismatched
+			if (int(Message) != `APCTRREAD('ItemsReceivedStrategy'))
+				return;
+			continue;
+		}
+
 		HandleMessage(Message);
 
 		`APCTRINC('ItemsReceivedStrategy');
@@ -297,6 +306,15 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 	for (ItemNr = 0; ItemNr < NumMessages; ItemNr++)
 	{
 		Message = Messages[ItemNr];
+
+		// Check for integer message
+		if (Message == string(int(Message)))
+		{
+			// Abort if state is mismatched
+			if (int(Message) != `APCTRREAD('ItemsReceivedTactical'))
+				return;
+			continue;
+		}
 		
 		HandleMessage(Message);
 
