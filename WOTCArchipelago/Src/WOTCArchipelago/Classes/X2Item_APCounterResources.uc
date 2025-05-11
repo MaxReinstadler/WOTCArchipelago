@@ -35,7 +35,7 @@ static function array<X2DataTemplate> CreateTemplates()
 }
 
 // Count chosen hunt covert ops completed by each faction
-static function CountChosenHuntCompleted(out int NumReaperChosenHuntCompleted, out int NumSkirmisherChosenHuntCompleted, out int NumTemplarChosenHuntCompleted)
+static function CountChosenHuntCompleted(out int NumReaperChosenHuntCompleted, out int NumSkirmisherChosenHuntCompleted, out int NumTemplarChosenHuntCompleted, optional XComGameState NewGameState)
 {
 	local XComGameState_ResistanceFaction	FactionState;
 	local array<name>						ChosenHuntNameList;
@@ -47,6 +47,9 @@ static function CountChosenHuntCompleted(out int NumReaperChosenHuntCompleted, o
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{
+		if (NewGameState != none)
+			FactionState = XComGameState_ResistanceFaction(NewGameState.GetGameStateForObjectID(FactionState.ObjectID));
+
 		foreach ChosenHuntNameList(ChosenHuntName)
 		{
 			if (FactionState.CompletedCovertActions.Find(ChosenHuntName) != INDEX_NONE)
@@ -60,13 +63,13 @@ static function CountChosenHuntCompleted(out int NumReaperChosenHuntCompleted, o
 }
 
 // Get faction of most recently completed (and not checked) chosen hunt covert op
-static function GetRecentCompletedChosenHuntFaction(out XComGameState_ResistanceFaction FactionState, out name CheckedCounterName)
+static function GetRecentCompletedChosenHuntFaction(out XComGameState_ResistanceFaction FactionState, out name CheckedCounterName, optional XComGameState NewGameState)
 {
 	local int NumReaperChosenHuntCompleted;
 	local int NumSkirmisherChosenHuntCompleted;
 	local int NumTemplarChosenHuntCompleted;
 
-	CountChosenHuntCompleted(NumReaperChosenHuntCompleted, NumSkirmisherChosenHuntCompleted, NumTemplarChosenHuntCompleted);
+	CountChosenHuntCompleted(NumReaperChosenHuntCompleted, NumSkirmisherChosenHuntCompleted, NumTemplarChosenHuntCompleted, NewGameState);
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{

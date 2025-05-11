@@ -141,7 +141,7 @@ static protected function EventListenerReturn OnCovertActionCompleted(Object Eve
 	local int								ChosenHuntPart;
 	local int								ChosenHuntPartCount;
 
-	class'X2Item_APCounterResources'.static.GetRecentCompletedChosenHuntFaction(FactionState, CheckedCounterName);
+	class'X2Item_APCounterResources'.static.GetRecentCompletedChosenHuntFaction(FactionState, CheckedCounterName, NewGameState);
 
 	// No chosen hunt covert action
 	if (FactionState == none) return ELR_NoInterrupt;
@@ -154,7 +154,6 @@ static protected function EventListenerReturn OnCovertActionCompleted(Object Eve
 	if (`APCTRREAD('TemplarChosenHuntChecked') >= ChosenHuntPart) ChosenHuntPartCount += 1;
 
 	`APCLIENT.OnCheckReached(NewGameState, name("ChosenHuntPt" $ ChosenHuntPart $ ":" $ ChosenHuntPartCount));
-
 	return ELR_NoInterrupt;
 }
 
