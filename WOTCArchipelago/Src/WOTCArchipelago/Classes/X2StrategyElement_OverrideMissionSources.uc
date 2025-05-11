@@ -10,9 +10,6 @@ var localized string strSkippedSupplyRaid;
 var localized string strSkippedCouncilMission;
 var localized string strSkippedResistanceOp;
 var localized string strSkippedRewardCollection;
-var localized string strPreventedAmbush;
-var localized string strPreventedCapture;
-var localized string strPreventionQuip;
 
 // SPAWN OVERRIDE FUNCTIONS
 
@@ -67,9 +64,9 @@ static function SpawnSupplyRaidMission_Override(XComGameState NewGameState, int 
 
 		// Show custom skip mission popup
 		APClient = `APCLIENT;
-		APClient.bShowCustomPopup = true;
 		APClient.CustomPopupTitle = default.strSkippedSupplyRaid;
 		APClient.CustomPopupText = default.strSkippedRewardCollection;
+		APClient.bShowCustomPopup = true;
 	}
 	else
 	{
@@ -137,9 +134,9 @@ static function SpawnCouncilMission_Override(XComGameState NewGameState, int Mis
 
 		// Show custom skip mission popup
 		APClient = `APCLIENT;
-		APClient.bShowCustomPopup = true;
 		APClient.CustomPopupTitle = default.strSkippedCouncilMission;
 		APClient.CustomPopupText = default.strSkippedRewardCollection;
+		APClient.bShowCustomPopup = true;
 	}
 	else
 	{
@@ -184,9 +181,9 @@ static function SpawnResOpMission_Override(XComGameState NewGameState, int Missi
 
 		// Show custom skip mission popup
 		APClient = `APCLIENT;
-		APClient.bShowCustomPopup = true;
 		APClient.CustomPopupTitle = default.strSkippedResistanceOp;
 		APClient.CustomPopupText = default.strSkippedRewardCollection;
+		APClient.bShowCustomPopup = true;
 	}
 	else
 	{
@@ -232,98 +229,6 @@ static function ResOpOnSuccess_Override(XComGameState NewGameState, XComGameStat
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_ResistanceOpsCompleted');
 	
 	`XEVENTMGR.TriggerEvent('ResistanceOpComplete', , , NewGameState);
-}
-
-
-// RISK OVERRIDE FUNCTIONS
-
-static function CreateAmbushMission_Override(XComGameState NewGameState, XComGameState_CovertAction ActionState, optional StateObjectReference TargetRef)
-{
-	local XComGameState_HeadquartersResistance ResHQ;
-	local XComGameState_MissionSiteChosenAmbush MissionState;
-	local XComGameState_WorldRegion RegionState;
-	local XComGameState_Reward RewardState;
-	local X2StrategyElementTemplateManager StratMgr;
-	local X2RewardTemplate RewardTemplate;
-	local X2MissionSourceTemplate MissionSource;
-	local array<XComGameState_Reward> MissionRewards;
-	local WOTCArchipelago_APClient APClient;
-
-	// Disarm ambush risk
-	if (`APCFG(DISARM_AMBUSH_RISK))
-	{
-		`AMLOG("Skipped Ambush Risk Effects");
-
-		// Show custom disarm risk popup
-		APClient = `APCLIENT;
-		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = default.strPreventedAmbush;
-		APClient.CustomPopupText = default.strPreventionQuip;
-
-		return;
-	}
-
-	ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
-	if (ResHQ.CanCovertActionsBeAmbushed()) // If a Covert Action was supposed to be ambushed, but now the Order is active, don't spawn the mission
-	{
-		StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-		ActionState.bAmbushed = true; // Flag the Action as being ambushed so it cleans up properly and doesn't give rewards
-		ActionState.bNeedsAmbushPopup = true; // Set up for the Ambush popup
-		RegionState = ActionState.GetWorldRegion();
-
-		MissionRewards.Length = 0;
-		RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_None'));
-		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
-		MissionRewards.AddItem(RewardState);
-
-		MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_ChosenAmbush'));
-
-		MissionState = XComGameState_MissionSiteChosenAmbush(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteChosenAmbush'));
-		MissionState.CovertActionRef = ActionState.GetReference();
-		MissionState.BuildMission(MissionSource, RegionState.GetRandom2DLocationInRegion(), RegionState.GetReference(), MissionRewards, true);
-
-		MissionState.ResistanceFaction = ActionState.Faction;
-	}
-}
-
-static function ApplySoldierCaptured_Override(XComGameState NewGameState, XComGameState_CovertAction ActionState, optional StateObjectReference TargetRef)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_AdventChosen ChosenState;
-	local XComGameState_Unit UnitState;
-	local WOTCArchipelago_APClient APClient;
-
-	// Disarm capture risk
-	if (`APCFG(DISARM_CAPTURE_RISK))
-	{
-		`AMLOG("Skipped Soldier Capture Risk Effects");
-
-		// Show custom disarm risk popup
-		APClient = `APCLIENT;
-		APClient.bShowCustomPopup = true;
-		APClient.CustomPopupTitle = default.strPreventedCapture;
-		APClient.CustomPopupText = default.strPreventionQuip;
-
-		return;
-	}
-
-	if (TargetRef.ObjectID != 0)
-	{
-		UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', TargetRef.ObjectID));
-		if (UnitState != none)
-		{
-			// Add soldier to the Chosen's captured list
-			ChosenState = XComGameState_AdventChosen(NewGameState.ModifyStateObject(class'XComGameState_AdventChosen', ActionState.GetFaction().RivalChosen.ObjectID));
-			ChosenState.CaptureSoldier(NewGameState, UnitState.GetReference());
-
-			`XEVENTMGR.TriggerEvent( 'ChosenCapture', UnitState, ChosenState, NewGameState );
-			
-			// Remove captured soldier from XComHQ crew
-			XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-			XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-			XComHQ.RemoveFromCrew(UnitState.GetReference());			
-		}
-	}
 }
 
 

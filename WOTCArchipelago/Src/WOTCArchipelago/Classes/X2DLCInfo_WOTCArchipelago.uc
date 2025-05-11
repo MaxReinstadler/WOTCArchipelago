@@ -297,14 +297,24 @@ static private function PatchCovertActionRiskTemplates(X2DataTemplate DataTempla
 	// Only patch ambush and capture risks
 	if (CovertActionRiskTemplate.DataName == 'CovertActionRisk_Ambush')
 	{
-		CovertActionRiskTemplate.ApplyRiskFn = class'X2StrategyElement_OverrideMissionSources'.static.CreateAmbushMission_Override;
+		CovertActionRiskTemplate.IsRiskAvailableFn = IsAmbushRiskAvailable;
 		`AMLOG("Patched " $ CovertActionRiskTemplate.Name);
 	}
 	else if (CovertActionRiskTemplate.DataName == 'CovertActionRisk_SoldierCaptured')
 	{
-		CovertActionRiskTemplate.ApplyRiskFn = class'X2StrategyElement_OverrideMissionSources'.static.ApplySoldierCaptured_Override;
+		CovertActionRiskTemplate.IsRiskAvailableFn = IsCaptureRiskAvailable;
 		`AMLOG("Patched " $ CovertActionRiskTemplate.Name);
 	}
+}
+
+static private function bool IsAmbushRiskAvailable(XComGameState_ResistanceFaction FactionState, optional XComGameState NewGameState)
+{
+	return !`APCFG(DISARM_AMBUSH_RISK);
+}
+
+static private function bool IsCaptureRiskAvailable(XComGameState_ResistanceFaction FactionState, optional XComGameState NewGameState)
+{
+	return !`APCFG(DISARM_CAPTURE_RISK);
 }
 
 // Patch chosen hunt covert action templates to alter rewards
