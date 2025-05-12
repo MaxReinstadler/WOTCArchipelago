@@ -1,7 +1,7 @@
 // Most of this code by https://github.com/chrishayesmu
 // See: https://github.com/chrishayesmu/XCOM2-Twitch-Integration/blob/master/Twitch%20Integration/Src/TwitchIntegration/Classes/HttpGetRequest.uc
 
-class WOTCArchipelago_TcpLink extends TcpLink config(WOTCArchipelago_Defaults);
+class WOTCArchipelago_TcpLink extends TcpLink config(WOTCArchipelago);
 
 struct HttpHeader {
 	var string Key;
@@ -30,6 +30,8 @@ var private HttpResponse Response;
 
 var private delegate<ResponseHandler> OnRequestComplete;
 var private delegate<ResponseHandler> OnRequestError;
+
+var config int ProxyPort;
 
 delegate ResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp);
 
@@ -93,7 +95,7 @@ event Resolved(IpAddr Addr)
 {
     local int LocalPort;
 
-	Addr.Port = `APCFG(PROXY_PORT);
+	Addr.Port = default.ProxyPort;
     LocalPort = BindPort();
 
     if (!bIsTickRequest) `AMLOG(Host $ " resolved to " $ IpAddrToString(Addr));

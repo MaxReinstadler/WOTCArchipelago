@@ -20,6 +20,10 @@ delegate ModifyTemplate(X2DataTemplate DataTemplate);
 
 static event OnPostTemplatesCreated()
 {
+	// Load and save AP default config settings if necessary
+	class'WOTCArchipelago_MCMScreen'.static.LoadAndSaveAPDefaults();
+
+	// Print mod version to log
 	`AMLOG(class'WOTCArchipelago_UISL_ShellSplash'.default.ModVersion);
 
 	// Patch research projects to alter effects upon completion
@@ -309,12 +313,12 @@ static private function PatchCovertActionRiskTemplates(X2DataTemplate DataTempla
 
 static private function bool IsAmbushRiskAvailable(XComGameState_ResistanceFaction FactionState, optional XComGameState NewGameState)
 {
-	return !`APCFG(DISARM_AMBUSH_RISK);
+	return !`APCFG(DISABLE_AMBUSH_RISK);
 }
 
 static private function bool IsCaptureRiskAvailable(XComGameState_ResistanceFaction FactionState, optional XComGameState NewGameState)
 {
-	return !`APCFG(DISARM_CAPTURE_RISK);
+	return !`APCFG(DISABLE_CAPTURE_RISK);
 }
 
 // Patch chosen hunt covert action templates to alter rewards

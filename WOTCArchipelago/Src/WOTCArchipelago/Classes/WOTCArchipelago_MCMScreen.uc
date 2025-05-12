@@ -6,28 +6,27 @@ var localized string strSettingsPageTitle;
 
 var localized string strGroupGeneralTitle;
 var localized string strGroupReducedCampaignDuration;
-var localized string strGroupCampaignCompletionRequirements;
-var localized string strGroupMiscellaneous;
+var localized string strGroupTraps;
 
 
 `include(WOTCArchipelago/Src/ModConfigMenuAPI/MCM_API_Includes.uci)
 `include(WOTCArchipelago/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
 
 
-// Enables debug logging to /Documents/My Games/XCOM2 War of the Chosen/XComGame/Logs/Launch.log
-`MCM_API_CheckboxVars(DEBUG_LOGGING);
+// Unique AP generation ID set by the client
+var config string CFG_AP_GEN_ID;
 
-// Port of the local proxy
-`MCM_API_SliderVars(PROXY_PORT, int);
+// Enable debug logging to /Documents/My Games/XCOM2 War of the Chosen/XComGame/Logs/Launch.log
+`MCM_API_CheckboxVars(DEBUG_LOGGING);
 
 // Skip certain time-consuming missions
 `MCM_API_CheckboxVars(SKIP_SUPPLY_RAIDS);
 `MCM_API_CheckboxVars(SKIP_COUNCIL_MISSIONS);
 `MCM_API_CheckboxVars(SKIP_FACTION_MISSIONS);
 
-// Disarm certain time-consuming covert op risks
-`MCM_API_CheckboxVars(DISARM_AMBUSH_RISK);
-`MCM_API_CheckboxVars(DISARM_CAPTURE_RISK);
+// Disable certain time-consuming covert op risks
+`MCM_API_CheckboxVars(DISABLE_AMBUSH_RISK);
+`MCM_API_CheckboxVars(DISABLE_CAPTURE_RISK);
 
 // Skipped supply raid rewards
 `MCM_API_SliderVars(SKIP_RAID_REWARD_MULT_BASE, float);
@@ -39,11 +38,6 @@ var localized string strGroupMiscellaneous;
 // Increase corpse gain
 `MCM_API_SliderVars(EXTRA_CORPSES, int);
 
-// Set story objective completion requirements
-`MCM_API_CheckboxVars(REQ_PSI_GATE_OBJ);
-`MCM_API_CheckboxVars(REQ_STASIS_SUIT_OBJ);
-`MCM_API_CheckboxVars(REQ_AVATAR_CORPSE_OBJ);
-
 // Disable day 1 traps
 `MCM_API_CheckboxVars(NO_STARTING_TRAPS);
 
@@ -53,14 +47,12 @@ var config int CFG_VERSION;
 
 `MCM_API_CheckboxFns(DEBUG_LOGGING);
 
-`MCM_API_SliderFns(PROXY_PORT, int);
-
 `MCM_API_CheckboxFns(SKIP_SUPPLY_RAIDS);
 `MCM_API_CheckboxFns(SKIP_COUNCIL_MISSIONS);
 `MCM_API_CheckboxFns(SKIP_FACTION_MISSIONS);
 
-`MCM_API_CheckboxFns(DISARM_AMBUSH_RISK);
-`MCM_API_CheckboxFns(DISARM_CAPTURE_RISK);
+`MCM_API_CheckboxFns(DISABLE_AMBUSH_RISK);
+`MCM_API_CheckboxFns(DISABLE_CAPTURE_RISK);
 
 `MCM_API_SliderFns(SKIP_RAID_REWARD_MULT_BASE, float);
 `MCM_API_SliderFns(SKIP_RAID_REWARD_MULT_ERR, float);
@@ -68,10 +60,6 @@ var config int CFG_VERSION;
 `MCM_API_SliderFns(EXTRA_XP_MULT, float);
 
 `MCM_API_SliderFns(EXTRA_CORPSES, int);
-
-`MCM_API_CheckboxFns(REQ_PSI_GATE_OBJ);
-`MCM_API_CheckboxFns(REQ_STASIS_SUIT_OBJ);
-`MCM_API_CheckboxFns(REQ_AVATAR_CORPSE_OBJ);
 
 `MCM_API_CheckboxFns(NO_STARTING_TRAPS);
 
@@ -88,10 +76,9 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     local MCM_API_SettingsPage Page;
     local MCM_API_SettingsGroup GroupGeneral;
 	local MCM_API_SettingsGroup GroupDuration;
-	local MCM_API_SettingsGroup GroupCompletion;
-	local MCM_API_SettingsGroup GroupMiscellaneous;
+	local MCM_API_SettingsGroup GroupTraps;
     
-    LoadSavedSettings();
+	LoadSavedSettings();
     
     Page = ConfigAPI.NewSettingsPage(default.strMenuPageTitle);
     Page.SetPageTitle(default.strSettingsPageTitle);
@@ -100,26 +87,20 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	
     GroupGeneral = Page.AddGroup('General', default.strGroupGeneralTitle);
 	`MCM_API_AddCheckbox(GroupGeneral, DEBUG_LOGGING);
-	`MCM_API_AddSlider(GroupGeneral, PROXY_PORT, 20028, 25028, 100);
 
 	GroupDuration = Page.AddGroup('Duration', default.strGroupReducedCampaignDuration);
     `MCM_API_AddCheckbox(GroupDuration, SKIP_SUPPLY_RAIDS);
 	`MCM_API_AddCheckbox(GroupDuration, SKIP_COUNCIL_MISSIONS);
 	`MCM_API_AddCheckbox(GroupDuration, SKIP_FACTION_MISSIONS);
-	`MCM_API_AddCheckbox(GroupDuration, DISARM_AMBUSH_RISK);
-	`MCM_API_AddCheckbox(GroupDuration, DISARM_CAPTURE_RISK);
+	`MCM_API_AddCheckbox(GroupDuration, DISABLE_AMBUSH_RISK);
+	`MCM_API_AddCheckbox(GroupDuration, DISABLE_CAPTURE_RISK);
 	`MCM_API_AddSlider(GroupDuration, SKIP_RAID_REWARD_MULT_BASE, 0.0f, 1.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, SKIP_RAID_REWARD_MULT_ERR, 0.0f, 1.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, 0.0f, 2.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, 0, 5, 1);
 
-	GroupCompletion = Page.AddGroup('Completion', default.strGroupCampaignCompletionRequirements);
-	`MCM_API_AddCheckbox(GroupCompletion, REQ_PSI_GATE_OBJ);
-	`MCM_API_AddCheckbox(GroupCompletion, REQ_STASIS_SUIT_OBJ);
-	`MCM_API_AddCheckbox(GroupCompletion, REQ_AVATAR_CORPSE_OBJ);
-
-	GroupMiscellaneous = Page.AddGroup('Miscellaneous', default.strGroupMiscellaneous);
-	`MCM_API_AddCheckbox(GroupMiscellaneous, NO_STARTING_TRAPS);
+	GroupTraps = Page.AddGroup('Traps', default.strGroupTraps);
+	`MCM_API_AddCheckbox(GroupTraps, NO_STARTING_TRAPS);
 
     Page.ShowSettings();
 }
@@ -128,14 +109,12 @@ simulated function LoadSavedSettings()
 {
 	`MCM_API_LoadSetting(DEBUG_LOGGING);
 
-	`MCM_API_LoadSetting(PROXY_PORT);
-
 	`MCM_API_LoadSetting(SKIP_SUPPLY_RAIDS);
 	`MCM_API_LoadSetting(SKIP_COUNCIL_MISSIONS);
 	`MCM_API_LoadSetting(SKIP_FACTION_MISSIONS);
 
-	`MCM_API_LoadSetting(DISARM_AMBUSH_RISK);
-	`MCM_API_LoadSetting(DISARM_CAPTURE_RISK);
+	`MCM_API_LoadSetting(DISABLE_AMBUSH_RISK);
+	`MCM_API_LoadSetting(DISABLE_CAPTURE_RISK);
 
 	`MCM_API_LoadSetting(SKIP_RAID_REWARD_MULT_BASE);
 	`MCM_API_LoadSetting(SKIP_RAID_REWARD_MULT_ERR);
@@ -144,10 +123,6 @@ simulated function LoadSavedSettings()
 
 	`MCM_API_LoadSetting(EXTRA_CORPSES);
 
-	`MCM_API_LoadSetting(REQ_PSI_GATE_OBJ);
-	`MCM_API_LoadSetting(REQ_STASIS_SUIT_OBJ);
-	`MCM_API_LoadSetting(REQ_AVATAR_CORPSE_OBJ);
-
 	`MCM_API_LoadSetting(NO_STARTING_TRAPS);
 }
 
@@ -155,14 +130,12 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 {
 	`MCM_API_RestoreDefault(DEBUG_LOGGING);
 
-	`MCM_API_RestoreDefault(PROXY_PORT);
-
 	`MCM_API_RestoreDefault(SKIP_SUPPLY_RAIDS);
 	`MCM_API_RestoreDefault(SKIP_COUNCIL_MISSIONS);
 	`MCM_API_RestoreDefault(SKIP_FACTION_MISSIONS);
 
-	`MCM_API_RestoreDefault(DISARM_AMBUSH_RISK);
-	`MCM_API_RestoreDefault(DISARM_CAPTURE_RISK);
+	`MCM_API_RestoreDefault(DISABLE_AMBUSH_RISK);
+	`MCM_API_RestoreDefault(DISABLE_CAPTURE_RISK);
 
 	`MCM_API_RestoreDefault(SKIP_RAID_REWARD_MULT_BASE);
 	`MCM_API_RestoreDefault(SKIP_RAID_REWARD_MULT_ERR);
@@ -171,10 +144,6 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 
 	`MCM_API_RestoreDefault(EXTRA_CORPSES);
 
-	`MCM_API_RestoreDefault(REQ_PSI_GATE_OBJ);
-	`MCM_API_RestoreDefault(REQ_STASIS_SUIT_OBJ);
-	`MCM_API_RestoreDefault(REQ_AVATAR_CORPSE_OBJ);
-
 	`MCM_API_RestoreDefault(NO_STARTING_TRAPS);
 }
 
@@ -182,4 +151,43 @@ simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
 {
     CFG_VERSION = `MCM_CH_GetCompositeVersion();
     SaveConfig();
+}
+
+static private function bool ShouldLoadAPDefaults()
+{
+	if (class'WOTCArchipelago_Defaults'.default.DEF_AP_GEN_ID == "")
+	{
+		`ERROR("AP generation ID not set, connect to the server through the client and restart the game.");
+		return false;
+	}
+
+	return (class'WOTCArchipelago_Defaults'.default.DEF_AP_GEN_ID != default.CFG_AP_GEN_ID);
+}
+
+static function LoadAndSaveAPDefaults()
+{
+	if (!ShouldLoadAPDefaults()) return;
+
+	`MCM_API_LoadAPDefault(AP_GEN_ID);
+
+	default.CFG_DEBUG_LOGGING = `APCFG(DEBUG_LOGGING);
+
+	`MCM_API_LoadAPDefault(SKIP_SUPPLY_RAIDS);
+	`MCM_API_LoadAPDefault(SKIP_COUNCIL_MISSIONS);
+	`MCM_API_LoadAPDefault(SKIP_FACTION_MISSIONS);
+
+	`MCM_API_LoadAPDefault(DISABLE_AMBUSH_RISK);
+	`MCM_API_LoadAPDefault(DISABLE_CAPTURE_RISK);
+
+	`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_BASE);
+	`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_ERR);
+
+	`MCM_API_LoadAPDefault(EXTRA_XP_MULT);
+
+	`MCM_API_LoadAPDefault(EXTRA_CORPSES);
+
+	`MCM_API_LoadAPDefault(NO_STARTING_TRAPS);
+
+	default.CFG_VERSION = `MCM_CH_GetCompositeVersion();
+	class'WOTCArchipelago_MCMScreen'.static.StaticSaveConfig();
 }

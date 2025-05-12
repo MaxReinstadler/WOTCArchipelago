@@ -37,3 +37,5 @@
 
 `define MCM_API_LoadSetting(VAR) CFG_`{VAR} = `APCFG(`{VAR})
 `define MCM_API_RestoreDefault(VAR) `{VAR}_UI.SetValue(`{MCM_DEFAULT}`{VAR}, false)
+
+`define MCM_API_LoadAPDefault(VAR) `{MCM_CONFIG}`{VAR} = `{MCM_DEFAULT}`{VAR}

@@ -1,4 +1,5 @@
 class WOTCArchipelago_APClient extends Actor
+		config(WOTCArchipelago)
 		dependson(WOTCArchipelago_TcpLink);
 
 var array<name> AddItemNames;
@@ -18,6 +19,10 @@ var private string StaffType;
 var private string TrapType;
 
 var private array<name> CheckBuffer;
+
+var config bool bRequirePsiGate;
+var config bool bRequireStasisSuit;
+var config bool bRequireAvatarCorpse;
 
 var localized string strRequestTimedOut;
 var localized string strRequestTimedOutDetails;
@@ -192,9 +197,9 @@ private final function HandleObjectiveCompletion()
 	XComHQ = `XCOMHQ;
 
 	// Add story objective completed counters to HQ inventory
-	if (!`APCFG(REQ_PSI_GATE_OBJ) || XComHQ.IsObjectiveCompleted('T4_M2_ConstructPsiGate')) `APCTRINC('PsiGateObjectiveCompleted');
-	if (!`APCFG(REQ_STASIS_SUIT_OBJ) || XComHQ.IsObjectiveCompleted('T2_M4_BuildStasisSuit')) `APCTRINC('StasisSuitObjectiveCompleted');
-	if (!`APCFG(REQ_AVATAR_CORPSE_OBJ) || XComHQ.IsObjectiveCompleted('T1_M6_S0_RecoverAvatarCorpse')) `APCTRINC('AvatarCorpseObjectiveCompleted');
+	if (!default.bRequirePsiGate || XComHQ.IsObjectiveCompleted('T4_M2_ConstructPsiGate')) `APCTRINC('PsiGateObjectiveCompleted');
+	if (!default.bRequireStasisSuit || XComHQ.IsObjectiveCompleted('T2_M4_BuildStasisSuit')) `APCTRINC('StasisSuitObjectiveCompleted');
+	if (!default.bRequireAvatarCorpse || XComHQ.IsObjectiveCompleted('T1_M6_S0_RecoverAvatarCorpse')) `APCTRINC('AvatarCorpseObjectiveCompleted');
 
 	// HACK: Periodically trigger events to fix sequence broken objectives
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("HACK: Trigger events for sequence breaks");

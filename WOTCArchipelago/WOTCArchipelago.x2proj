@@ -26,9 +26,6 @@
     <Content Include="Config\XComWOTCArchipelago.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComWOTCArchipelago_Defaults.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\Base\XComEditor.ini" />
