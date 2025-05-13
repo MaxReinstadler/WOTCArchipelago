@@ -26,6 +26,9 @@
     <Content Include="Config\XComWOTCArchipelago.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComWOTCArchipelago_Spoiler.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\Base\XComEditor.ini" />
@@ -37,6 +40,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_MCMScreen.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_Spoiler.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_UISL_ShellSplash.uc">
