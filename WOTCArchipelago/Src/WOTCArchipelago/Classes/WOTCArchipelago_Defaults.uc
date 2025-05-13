@@ -1,5 +1,5 @@
 // Helper class for accessing debug values
-class  WOTCArchipelago_Defaults extends Object config(WOTCArchipelago);
+class WOTCArchipelago_Defaults extends Object config(WOTCArchipelago);
 
 // Unique AP generation ID set by the client
 var config string DEF_AP_GEN_ID;

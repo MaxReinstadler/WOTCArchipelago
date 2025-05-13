@@ -190,4 +190,6 @@ static function LoadAndSaveAPDefaults()
 
 	default.CFG_VERSION = `MCM_CH_GetCompositeVersion();
 	class'WOTCArchipelago_MCMScreen'.static.StaticSaveConfig();
+
+	`AMLOG("Loaded and saved AP defaults for recognized new generation " $ default.CFG_AP_GEN_ID);
 }
