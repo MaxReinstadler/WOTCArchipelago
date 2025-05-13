@@ -20,11 +20,11 @@ delegate ModifyTemplate(X2DataTemplate DataTemplate);
 
 static event OnPostTemplatesCreated()
 {
+	// Check client version
+	class'WOTCArchipelago_Version'.static.CheckVersion();
+
 	// Load and save AP default config settings if necessary
 	class'WOTCArchipelago_MCMScreen'.static.LoadAndSaveAPDefaults();
-
-	// Print mod version to log
-	`AMLOG(class'WOTCArchipelago_UISL_ShellSplash'.default.ModVersion);
 
 	// Patch research projects to alter effects upon completion
 	`AMLOG("Patching Research Project Templates");
