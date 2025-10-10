@@ -15,7 +15,6 @@ static function CheckVersion()
 	local array<string>		RecModVersions;
 	local array<string>		RecModVersionValues;
 	local bool				bValid;
-	local bool				bValidVersion;
 	local int				Idx;
 	local int				Jdx;
 
@@ -33,11 +32,12 @@ static function CheckVersion()
 	{
 		RecModVersionValues = SplitString(RecModVersions[Idx], ".", true);
 
-		bValidVersion = true;
-		for (Jdx = 0; Jdx < RecModVersionValues.Length; Jdx++)
-			bValidVersion = ModVersionValues[Jdx] == RecModVersionValues[Jdx] || RecModVersionValues[Jdx] == "x";
+		for (Jdx = 0; Jdx < Min(ModVersionValues.Length, RecModVersionValues.Length); Jdx++)
+		{
+			bValid = ModVersionValues[Jdx] == RecModVersionValues[Jdx] || RecModVersionValues[Jdx] == "x";
+			if (!bValid) break;
+		}
 
-		bValid = bValid || bValidVersion;
 		if (bValid) break;
 	}
 
