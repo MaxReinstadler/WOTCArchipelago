@@ -51,6 +51,10 @@ strSkippedCouncilMission="Skipped Council Mission"
 strSkippedResistanceOp="Skipped Resistance Op"
 strSkippedRewardCollection="Rewards were collected automatically."
 
+[X2StrategyElement_APRewards]
+strAPChosenHuntReward="Archipelago Item"
+strAPChosenHuntRewardPreview="Archipelago Item"
+
 [WOTCArchipelago_UISL_TechHints]
 strItemPrefix="Item: "
 strPlayerPrefix="\nPlayer: "

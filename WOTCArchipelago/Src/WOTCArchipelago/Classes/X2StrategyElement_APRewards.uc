@@ -1,6 +1,9 @@
 class X2StrategyElement_APRewards extends X2StrategyElement_XpackRewards
 	dependson(X2RewardTemplate);
 
+var localized string strAPChosenHuntReward;
+var localized string strAPChosenHuntRewardPreview;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
@@ -16,7 +19,11 @@ static function X2DataTemplate CreateAPChosenHuntRewardTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_APChosenHunt');
+
 	Template.IsRewardAvailableFn = IsAPChosenHuntRewardAvailable;
+	Template.GetRewardStringFn = GetAPChosenHuntRewardString;
+	Template.GetRewardPreviewStringFn = GetAPChosenHuntRewardPreviewString;
+
 	return Template;
 }
 
@@ -36,4 +43,14 @@ static function bool IsAPChosenHuntRewardAvailable(optional XComGameState NewGam
 	}
 
 	return false;
+}
+
+static function string GetAPChosenHuntRewardString(XComGameState_Reward RewardState)
+{
+	return default.strAPChosenHuntReward;
+}
+
+static function string GetAPChosenHuntRewardPreviewString(XComGameState_Reward RewardState)
+{
+	return default.strAPChosenHuntRewardPreview;
 }
