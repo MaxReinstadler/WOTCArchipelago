@@ -86,3 +86,5 @@ strClassNormal="Normal"
 +arrNormalHints="Pursuing this line of research is certainly... an option."
 +arrNormalHints="I was hoping for something a little more exciting, personally."
 +arrNormalHints="If I may, commander, I don't think this research should be our top priority."
+
+strNoHint="Only one way to find out..."

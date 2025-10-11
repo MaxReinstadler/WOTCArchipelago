@@ -13,6 +13,8 @@ var localized array<string> arrUsefulHints;
 var localized array<string> arrTrapHints;
 var localized array<string> arrNormalHints;
 
+var localized string strNoHint;
+
 event OnInit(UIScreen Screen)
 {
 	if (UIChooseResearch(Screen) == none) return;
@@ -42,6 +44,10 @@ private function HintResearchProjects(UIChooseResearch ResearchScreen)
 		TechTemplate = XComGameState_Tech(`XCOMHISTORY.GetGameStateForObjectID(ResearchScreen.m_arrRefs[Idx].ObjectID)).GetMyTemplate();
 		if (!class'WOTCArchipelago_Spoiler'.static.GetSpoilerEntryByLocation(TechTemplate.DataName, TechSpoiler)) continue;
 
+		strItem = default.strItemPrefix $ "???";
+		strPlayer = default.strPlayerPrefix $ "???";
+
+		// Hint everything
 		if (`APCFG(HINT_TECH_LOC_FULL))
 		{
 			if (TechSpoiler.bProgression) strClass = default.strClassProgression;
@@ -54,10 +60,12 @@ private function HintResearchProjects(UIChooseResearch ResearchScreen)
 
 			ResearchScreen.arrItems[Idx].Desc = strItem $ strPlayer;
 
+			// Create server hint
 			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Creating server hint");
 			`APCLIENT.CreateServerHint(NewGameState, TechTemplate.DataName);
 			`GAMERULES.SubmitGameState(NewGameState);
 		}
+		// Hint classification
 		else if (`APCFG(HINT_TECH_LOC_PART))
 		{
 			if (TechSpoiler.bProgression) strHint = static.GetClassHint(TechSpoiler.Item, default.arrProgressionHints);
@@ -65,13 +73,19 @@ private function HintResearchProjects(UIChooseResearch ResearchScreen)
 			else if (TechSpoiler.bTrap) strHint = static.GetClassHint(TechSpoiler.Item, default.arrTrapHints);
 			else strHint = static.GetClassHint(TechSpoiler.Item, default.arrNormalHints);
 
-			ResearchScreen.arrItems[Idx].Desc = strHint;
+			ResearchScreen.arrItems[Idx].Desc = strItem $ strPlayer $ "\n\n" $ strHint;
+		}
+		// Hint nothing
+		else
+		{
+			ResearchScreen.arrItems[Idx].Desc = strItem $ strPlayer $ "\n\n" $ default.strNoHint;
 		}
 	}
 
 	ResearchScreen.PopulateData();
 }
 
+// Get arbitrary but deterministic hint
 static private function string GetClassHint(string strItem, array<string> arrClassHints)
 {
 	local int		Idx;
