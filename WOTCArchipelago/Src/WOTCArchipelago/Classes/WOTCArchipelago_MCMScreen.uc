@@ -4,7 +4,8 @@ class WOTCArchipelago_MCMScreen extends Object config(WOTCArchipelago_Settings);
 var localized string strMenuPageTitle;
 var localized string strSettingsPageTitle;
 
-var localized string strGroupGeneralTitle;
+var localized string strGroupGeneral;
+var localized string strGroupHints;
 var localized string strGroupReducedCampaignDuration;
 var localized string strGroupTraps;
 
@@ -18,6 +19,10 @@ var config string CFG_AP_GEN_ID;
 
 // Enable debug logging to /Documents/My Games/XCOM2 War of the Chosen/XComGame/Logs/Launch.log
 `MCM_API_CheckboxVars(DEBUG_LOGGING);
+
+// Hint research projects
+`MCM_API_CheckboxVars(HINT_TECH_LOC_PART);
+`MCM_API_CheckboxVars(HINT_TECH_LOC_FULL);
 
 // Skip certain time-consuming missions
 `MCM_API_CheckboxVars(SKIP_SUPPLY_RAIDS);
@@ -47,6 +52,9 @@ var config int CFG_VERSION;
 
 `MCM_API_CheckboxFns(DEBUG_LOGGING);
 
+`MCM_API_CheckboxFns(HINT_TECH_LOC_PART);
+`MCM_API_CheckboxFns(HINT_TECH_LOC_FULL);
+
 `MCM_API_CheckboxFns(SKIP_SUPPLY_RAIDS);
 `MCM_API_CheckboxFns(SKIP_COUNCIL_MISSIONS);
 `MCM_API_CheckboxFns(SKIP_FACTION_MISSIONS);
@@ -75,6 +83,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 {
     local MCM_API_SettingsPage Page;
     local MCM_API_SettingsGroup GroupGeneral;
+	local MCM_API_SettingsGroup GroupHints;
 	local MCM_API_SettingsGroup GroupDuration;
 	local MCM_API_SettingsGroup GroupTraps;
     
@@ -85,8 +94,12 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     Page.SetSaveHandler(SaveButtonClicked);
 	Page.EnableResetButton(ResetButtonClicked);
 	
-    GroupGeneral = Page.AddGroup('General', default.strGroupGeneralTitle);
+    GroupGeneral = Page.AddGroup('General', default.strGroupGeneral);
 	`MCM_API_AddCheckbox(GroupGeneral, DEBUG_LOGGING);
+
+	GroupHints = Page.AddGroup('Hints', default.strGroupHints);
+	`MCM_API_AddCheckbox(GroupHints, HINT_TECH_LOC_PART);
+	`MCM_API_AddCheckbox(GroupHints, HINT_TECH_LOC_FULL);
 
 	GroupDuration = Page.AddGroup('Duration', default.strGroupReducedCampaignDuration);
     `MCM_API_AddCheckbox(GroupDuration, SKIP_SUPPLY_RAIDS);
@@ -109,6 +122,9 @@ simulated function LoadSavedSettings()
 {
 	`MCM_API_LoadSetting(DEBUG_LOGGING);
 
+	`MCM_API_LoadSetting(HINT_TECH_LOC_PART);
+	`MCM_API_LoadSetting(HINT_TECH_LOC_FULL);
+
 	`MCM_API_LoadSetting(SKIP_SUPPLY_RAIDS);
 	`MCM_API_LoadSetting(SKIP_COUNCIL_MISSIONS);
 	`MCM_API_LoadSetting(SKIP_FACTION_MISSIONS);
@@ -129,6 +145,9 @@ simulated function LoadSavedSettings()
 simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 {
 	`MCM_API_RestoreDefault(DEBUG_LOGGING);
+
+	`MCM_API_RestoreDefault(HINT_TECH_LOC_PART);
+	`MCM_API_RestoreDefault(HINT_TECH_LOC_FULL);
 
 	`MCM_API_RestoreDefault(SKIP_SUPPLY_RAIDS);
 	`MCM_API_RestoreDefault(SKIP_COUNCIL_MISSIONS);
@@ -171,6 +190,9 @@ static function LoadAndSaveAPDefaults()
 	`MCM_API_LoadAPDefault(AP_GEN_ID);
 
 	default.CFG_DEBUG_LOGGING = `APCFG(DEBUG_LOGGING);
+
+	`MCM_API_LoadAPDefault(HINT_TECH_LOC_PART);
+	`MCM_API_LoadAPDefault(HINT_TECH_LOC_FULL);
 
 	`MCM_API_LoadAPDefault(SKIP_SUPPLY_RAIDS);
 	`MCM_API_LoadAPDefault(SKIP_COUNCIL_MISSIONS);

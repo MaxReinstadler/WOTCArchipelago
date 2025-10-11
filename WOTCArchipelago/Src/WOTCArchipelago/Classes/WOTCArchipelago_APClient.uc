@@ -32,6 +32,11 @@ var localized string strDoomTrapMessage;
 var localized string strDialogAccept;
 var localized string strDramaticMessageTitle;
 
+
+//=======================================================================================
+//                                       INIT
+//---------------------------------------------------------------------------------------
+
 static function WOTCArchipelago_APClient GetAPClient()
 {
 	local WOTCArchipelago_APClient APClient;
@@ -67,6 +72,11 @@ private function Initialize()
 	StaffType = "[Staff]";
 	TrapType = "[Trap]";
 }
+
+
+//=======================================================================================
+//                                       CHECK
+//---------------------------------------------------------------------------------------
 
 // CheckName depends on the type of check
 //
@@ -125,6 +135,32 @@ private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespo
 	
 	Link.Destroy();
 }
+
+
+//=======================================================================================
+//                                       HINT
+//---------------------------------------------------------------------------------------
+
+function CreateServerHint(XComGameState NewGameState, name CheckName)
+{
+	local WOTCArchipelago_TcpLink Link;
+	
+	`AMLOG("Hint created: " $ CheckName);
+	
+	Link = Spawn(class'WOTCArchipelago_TcpLink');
+	Link.Call("/Hint/" $ CheckName, HintResponseHandler);
+}
+
+private final function HintResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
+{
+	Link.Destroy();
+	ClearCheckBuffer();
+}
+
+
+//=======================================================================================
+//                                       TICK
+//---------------------------------------------------------------------------------------
 
 function Update()
 {
@@ -350,6 +386,11 @@ private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespon
 	
 	Link.Destroy();
 }
+
+
+//=======================================================================================
+//                                      RESPONSE
+//---------------------------------------------------------------------------------------
 
 private final function HandleMessage(string Message)
 {

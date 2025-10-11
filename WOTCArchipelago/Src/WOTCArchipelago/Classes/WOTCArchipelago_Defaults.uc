@@ -7,6 +7,10 @@ var config string DEF_AP_GEN_ID;
 // Enable debug logging to /Documents/My Games/XCOM2 War of the Chosen/XComGame/Logs/Launch.log
 var config bool DEF_DEBUG_LOGGING;
 
+// Hint research projects
+var config bool DEF_HINT_TECH_LOC_PART;
+var config bool DEF_HINT_TECH_LOC_FULL;
+
 // Skip certain time-consuming missions
 var config bool DEF_SKIP_SUPPLY_RAIDS;
 var config bool DEF_SKIP_COUNCIL_MISSIONS;

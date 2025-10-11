@@ -48,6 +48,9 @@
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_UISL_ShellSplash.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_UISL_TechHints.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_Version.uc">
       <SubType>Content</SubType>
     </Content>

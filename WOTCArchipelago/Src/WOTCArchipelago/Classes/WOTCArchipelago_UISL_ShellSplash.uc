@@ -13,7 +13,7 @@ event OnReceiveFocus(UIScreen Screen)
 	RealizeVersionText(UIShell(Screen));
 }
 
-function RealizeVersionText(UIShell ShellScreen)
+private function RealizeVersionText(UIShell ShellScreen)
 {
 	local UIText VersionText;
 
