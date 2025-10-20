@@ -1,8 +1,8 @@
 [WOTCArchipelago_APClient]
 strRequestTimedOut="Request Timed Out"
-strRequestTimedOutDetails="Please make sure client and proxy are running on the correct port."
+strRequestTimedOutDetails="Please connect to your slot and restart the game."
 strClientDisconnected="Client Disconnected"
-strClientDisconnectedDetails="Please connect to the server through the client."
+strClientDisconnectedDetails="Please connect to your slot and restart the game."
 strDoomTrapMessage="Archipelago Trap"
 strDialogAccept="OK"
 strDramaticMessageTitle="Archipelago"
