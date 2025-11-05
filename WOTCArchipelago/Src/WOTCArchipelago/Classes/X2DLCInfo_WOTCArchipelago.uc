@@ -26,6 +26,8 @@ static event OnPostTemplatesCreated()
 	// Load and save AP default config settings if necessary
 	class'WOTCArchipelago_MCMScreen'.static.LoadAndSaveAPDefaults();
 
+	// RESEARCH RANDO
+
 	// Patch research projects to alter effects upon completion
 	`AMLOG("Patching Research Project Templates");
 	IterateTemplatesAllDiff(class'X2TechTemplate', PatchResearchTemplates);
@@ -50,6 +52,8 @@ static event OnPostTemplatesCreated()
 	`AMLOG("Patching Proving Ground Project Templates");
 	IterateTemplatesAllDiff(class'X2TechTemplate', PatchProvingGroundTemplates);
 
+	// SKIPS
+
 	// Patch mission source templates to disable some optional mission types
 	`AMLOG("Patching Mission Source Templates");
 	IterateTemplatesAllDiff(class'X2MissionSourceTemplate', PatchMissionSourceTemplates);
@@ -58,9 +62,13 @@ static event OnPostTemplatesCreated()
 	`AMLOG("Patching Covert Op Risk Templates");
 	IterateTemplatesAllDiff(class'X2CovertActionRiskTemplate', PatchCovertActionRiskTemplates);
 
+	// CHOSEN HUNTSANITY
+
 	// Patch chosen hunt covert action templates to alter rewards
 	`AMLOG("Patching Covert Op Templates");
 	IterateTemplatesAllDiff(class'X2CovertActionTemplate', PatchCovertActionTemplates);
+
+	// ITEMSANITY
 
 	// Patch ammo templates to add item use check effect
 	`AMLOG("Patching Ammo Templates");
@@ -69,6 +77,18 @@ static event OnPostTemplatesCreated()
 	// Patch ability templates to add item use check effect
 	`AMLOG("Patching Ability Templates");
 	IterateTemplatesAllDiff(class'X2AbilityTemplate', PatchAbilityTemplates);
+
+	// ENEMY RANDO
+
+	// Patch spawn unit ability templates to alter spawned unit
+	`AMLOG("Patching Spawn Unit Ability Templates");
+	IterateTemplatesAllDiff(class'X2AbilityTemplate', PatchSpawnUnitAbilityTemplates);
+
+	// Patch enemy templates to alter stats
+	`AMLOG("Patching Enemy Templates");
+	IterateTemplatesAllDiff(class'X2CharacterTemplate', PatchEnemyTemplates);
+
+	// DebugPrintEncounters();
 }
 
 // Patch research projects to alter effects upon completion
@@ -364,6 +384,93 @@ static private function PatchAbilityTemplates(X2DataTemplate DataTemplate)
 	AbilityTemplate.AddShooterEffect(new class'X2Effect_ItemUseCheck');
 
 	`AMLOG("Patched " $ AbilityTemplate.Name);
+}
+
+// Patch spawn unit ability templates to alter spawned unit
+static private function PatchSpawnUnitAbilityTemplates(X2DataTemplate DataTemplate)
+{
+	local X2AbilityTemplate		AbilityTemplate;
+	local X2Effect				TargetEffect;
+	local X2Effect_SpawnUnit	SpawnUnitEffect;
+	local bool					bPatched;
+
+	AbilityTemplate = X2AbilityTemplate(DataTemplate);
+
+	foreach AbilityTemplate.AbilityTargetEffects(TargetEffect)
+	{
+		SpawnUnitEffect = X2Effect_SpawnUnit(TargetEffect);
+		if (SpawnUnitEffect == none) continue;
+		
+		bPatched = class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SpawnUnitEffect.UnitToSpawnName);
+	}
+
+	if (bPatched) `AMLOG("Patched " $ AbilityTemplate.Name);
+}
+
+// Patch enemy templates to alter stats
+static private function PatchEnemyTemplates(X2DataTemplate DataTemplate)
+{
+	local X2CharacterTemplate	CharacterTemplate;
+	local CharStatChange		StatChange;
+	local float					OldStat;
+	local float					NewStat;
+	local name					SectopodName;
+	local bool					bPatched;
+
+	CharacterTemplate = X2CharacterTemplate(DataTemplate);
+
+	foreach class'WOTCArchipelago_Spoiler'.default.CharStatChanges(StatChange)
+	{
+		if (StatChange.TemplateName == CharacterTemplate.DataName)
+		{
+			OldStat = CharacterTemplate.CharacterBaseStats[StatChange.StatType];
+			NewStat = Clamp(OldStat + StatChange.Delta, StatChange.Minimum, StatChange.Maximum);
+			CharacterTemplate.CharacterBaseStats[StatChange.StatType] = NewStat;
+			bPatched = true;
+		}
+	}
+
+	// Edit Action Points for Sectopod and its replacement
+	SectopodName = 'Sectopod';
+	class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SectopodName);
+	
+	if (CharacterTemplate.DataName == 'Sectopod' && CharacterTemplate.DataName != SectopodName)
+	{
+		CharacterTemplate.Abilities.AddItem('RemoveActionPoint');
+		bPatched = true;
+	}
+	if (CharacterTemplate.DataName != 'Sectopod' && CharacterTemplate.DataName == SectopodName)
+	{
+		CharacterTemplate.Abilities.AddItem('NeverConsumeAllPoints');
+		bPatched = true;
+	}
+
+	if (bPatched) `AMLOG("Patched " $ CharacterTemplate.Name);
+}
+
+// Print EncounterLists and ConfigurableEncounters for debug purposes
+static private function DebugPrintEncounters()
+{
+	local SpawnDistributionList			List;
+	local SpawnDistributionListEntry	Entry;
+	local ConfigurableEncounter			Conf;
+	local name							Forced;
+
+	`AMLOG("--- EncounterLists ---");
+	foreach class'XComTacticalMissionManager'.default.SpawnDistributionLists(List)
+	{
+		`AMLOG(List.ListID);
+		foreach List.SpawnDistribution(Entry)
+			`AMLOG("- " $ Entry.Template);
+	}
+
+	`AMLOG("--- ConfigurableEncounters ---");
+	foreach class'XComTacticalMissionManager'.default.ConfigurableEncounters(Conf)
+	{
+		`AMLOG(Conf.EncounterID);
+		foreach Conf.ForceSpawnTemplateNames(Forced)
+			`AMLOG("- " $ Forced);
+	}
 }
 
 

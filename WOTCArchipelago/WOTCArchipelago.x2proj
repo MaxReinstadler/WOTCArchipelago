@@ -20,7 +20,10 @@
     <Folder Include="Src\ModConfigMenuAPI\Classes" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Config\XComGameData.ini">
+    <Content Include="Config\XComEncounterLists.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\XComEncounters.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComWOTCArchipelago.ini">
@@ -52,6 +55,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_Version.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\X2Ability_EditActionPoints.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTCArchipelago\Classes\X2Effect_ItemUseCheck.uc">

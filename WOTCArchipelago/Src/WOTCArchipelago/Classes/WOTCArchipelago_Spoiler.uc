@@ -11,13 +11,46 @@ struct native SpoilerEntry
 	var bool bTrap;
 };
 
-var config array<SpoilerEntry> Spoiler;
+struct native EnemyRandoEntry
+{
+	var name DefaultTemplateName;
+	var name OverrideTemplateName;
+};
+
+struct native CharStatChange
+{
+	var name TemplateName;
+	var ECharStatType StatType;
+	var float Delta;
+	var float Minimum;
+	var float Maximum;
+};
+
+var config array<SpoilerEntry>			Spoiler;
+var config array<EnemyRandoEntry>		EnemyRando;
+var config array<CharStatChange>		CharStatChanges;
 
 static function bool GetSpoilerEntryByLocation(name LocationName, out SpoilerEntry Entry)
 {
 	foreach default.Spoiler(Entry)
 		if (Entry.Location == LocationName)
 			return true;
+
+	return false;
+}
+
+static function bool ApplyEnemyRando(out name TemplateName)
+{
+	local EnemyRandoEntry Entry;
+
+	foreach default.EnemyRando(Entry)
+	{
+		if (Entry.DefaultTemplateName == TemplateName)
+		{
+			TemplateName = Entry.OverrideTemplateName;
+			return true;
+		}
+	}
 
 	return false;
 }
