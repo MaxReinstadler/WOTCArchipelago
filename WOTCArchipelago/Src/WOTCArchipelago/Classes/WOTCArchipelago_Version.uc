@@ -14,7 +14,7 @@ static function bool CanCheckVersion()
 	return !(default.ClientVersion == "" || default.RecModVersion == "");
 }
 
-static function bool CheckVersion()
+static function bool CheckVersion(optional bool bDebug = true)
 {
 	local array<string>		ModVersionValues;
 	local array<string>		RecModVersions;
@@ -25,7 +25,8 @@ static function bool CheckVersion()
 
 	if (!CanCheckVersion())
 	{
-		`ERROR("Client version not set, connect to the server through the client and restart the game.");
+		if (bDebug)
+			`ERROR("Client version not set, connect to the server through the client and restart the game.");
 		return false;
 	}
 
@@ -46,10 +47,13 @@ static function bool CheckVersion()
 		if (bValid) break;
 	}
 
-	if (!bValid)
-		`ERROR("Incompatible client (" $ default.ClientVersion $ ") and mod (" $ default.ModVersion $ ") versions.");
-	else
-		`AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion);
+	if (bDebug)
+	{
+		if (!bValid)
+			`ERROR("Incompatible client (" $ default.ClientVersion $ ") and mod (" $ default.ModVersion $ ") versions.");
+		else
+			`AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion);
+	}
 
 	return bValid;
 }

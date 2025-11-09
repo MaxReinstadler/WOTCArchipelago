@@ -49,7 +49,7 @@ private function ShowWarningPopup(UIShell ShellScreen)
 
 	if (!class'WOTCArchipelago_Version'.static.CanCheckVersion())
 		RealizeDisconnectedPopup(ShellScreen);
-	else if (!class'WOTCArchipelago_Version'.static.CheckVersion())
+	else if (!class'WOTCArchipelago_Version'.static.CheckVersion(false))
 		RealizeIncompatiblePopup(ShellScreen);
 
 	bShowedWarningPopup = true;
@@ -77,9 +77,4 @@ private function RealizeIncompatiblePopup(UIShell ShellScreen)
 	kDialogData.strAccept = class'WOTCArchipelago_APClient'.default.strDialogAccept;
 
 	ShellScreen.Movie.Pres.UIRaiseDialog(kDialogData);
-}
-
-defaultproperties
-{
-	ScreenClass = class'UIShell';
 }
