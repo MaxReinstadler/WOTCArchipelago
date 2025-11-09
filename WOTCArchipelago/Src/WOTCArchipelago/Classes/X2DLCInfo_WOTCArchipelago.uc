@@ -415,6 +415,8 @@ static private function PatchEnemyTemplates(X2DataTemplate DataTemplate)
 	local float					OldStat;
 	local float					NewStat;
 	local name					SectopodName;
+	local int					Idx;
+	local name					SupportedFollower;
 	local bool					bPatched;
 
 	CharacterTemplate = X2CharacterTemplate(DataTemplate);
@@ -443,6 +445,14 @@ static private function PatchEnemyTemplates(X2DataTemplate DataTemplate)
 	{
 		CharacterTemplate.Abilities.AddItem('NeverConsumeAllPoints');
 		bPatched = true;
+	}
+
+	// Alter Supported Followers
+	for (Idx = 0; Idx < CharacterTemplate.SupportedFollowers.Length; Idx++)
+	{
+		SupportedFollower = CharacterTemplate.SupportedFollowers[Idx];
+		bPatched = bPatched || class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SupportedFollower);
+		CharacterTemplate.SupportedFollowers[Idx] = SupportedFollower;
 	}
 
 	if (bPatched) `AMLOG("Patched " $ CharacterTemplate.Name);
