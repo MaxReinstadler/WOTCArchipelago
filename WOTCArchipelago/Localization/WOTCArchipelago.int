@@ -3,6 +3,12 @@ strRequestTimedOut="Request Timed Out"
 strRequestTimedOutDetails="Please connect to your slot and restart the game."
 strClientDisconnected="Client Disconnected"
 strClientDisconnectedDetails="Please connect to your slot and restart the game."
+
+strDisconnectedWarning="Client Disconnected"
+strDisconnectedWarningDetails="Please connect to your slot and restart the game.\nContinuing without doing so may result in unexpected behavior."
+strIncompatibleWarning="Version Incompatible"
+strIncompatibleWarningDetails="This mod version is incompatible with the client version.\nPlease install the appropriate mod version."
+
 strDoomTrapMessage="Archipelago Trap"
 strDialogAccept="OK"
 strDramaticMessageTitle="Archipelago"

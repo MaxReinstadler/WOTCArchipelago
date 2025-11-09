@@ -28,6 +28,12 @@ var localized string strRequestTimedOut;
 var localized string strRequestTimedOutDetails;
 var localized string strClientDisconnected;
 var localized string strClientDisconnectedDetails;
+
+var localized string strDisconnectedWarning;
+var localized string strDisconnectedWarningDetails;
+var localized string strIncompatibleWarning;
+var localized string strIncompatibleWarningDetails;
+
 var localized string strDoomTrapMessage;
 var localized string strDialogAccept;
 var localized string strDramaticMessageTitle;

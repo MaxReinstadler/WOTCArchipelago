@@ -9,7 +9,12 @@ static function string GetModVersion()
 	return "WOTCArchipelago " $ default.ModVersion;
 }
 
-static function CheckVersion()
+static function bool CanCheckVersion()
+{
+	return !(default.ClientVersion == "" || default.RecModVersion == "");
+}
+
+static function bool CheckVersion()
 {
 	local array<string>		ModVersionValues;
 	local array<string>		RecModVersions;
@@ -18,10 +23,10 @@ static function CheckVersion()
 	local int				Idx;
 	local int				Jdx;
 
-	if (default.ClientVersion == "" || default.RecModVersion == "")
+	if (!CanCheckVersion())
 	{
 		`ERROR("Client version not set, connect to the server through the client and restart the game.");
-		return;
+		return false;
 	}
 
 	ModVersionValues = SplitString(default.ModVersion, ".", true);
@@ -45,4 +50,6 @@ static function CheckVersion()
 		`ERROR("Incompatible client (" $ default.ClientVersion $ ") and mod (" $ default.ModVersion $ ") versions.");
 	else
 		`AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion);
+
+	return bValid;
 }
