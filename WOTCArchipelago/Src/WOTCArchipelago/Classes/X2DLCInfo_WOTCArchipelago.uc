@@ -80,13 +80,16 @@ static event OnPostTemplatesCreated()
 
 	// ENEMY RANDO
 
-	// Patch spawn unit ability templates to alter spawned unit
-	`AMLOG("Patching Spawn Unit Ability Templates");
-	IterateTemplatesAllDiff(class'X2AbilityTemplate', PatchSpawnUnitAbilityTemplates);
+	if (class'WOTCArchipelago_Spoiler'.static.IsEnemyRandoActive())
+	{
+		// Patch spawn unit ability templates to alter spawned unit
+		`AMLOG("Patching Spawn Unit Ability Templates");
+		IterateTemplatesAllDiff(class'X2AbilityTemplate', PatchSpawnUnitAbilityTemplates);
 
-	// Patch enemy templates to alter stats
-	`AMLOG("Patching Enemy Templates");
-	IterateTemplatesAllDiff(class'X2CharacterTemplate', PatchEnemyTemplates);
+		// Patch enemy templates for stat changes and pod generation
+		`AMLOG("Patching Enemy Templates");
+		IterateTemplatesAllDiff(class'X2CharacterTemplate', PatchEnemyTemplates);
+	}
 
 	// DebugPrintEncounters();
 }
@@ -407,7 +410,7 @@ static private function PatchSpawnUnitAbilityTemplates(X2DataTemplate DataTempla
 	if (bPatched) `AMLOG("Patched " $ AbilityTemplate.Name);
 }
 
-// Patch enemy templates to alter stats
+// Patch enemy templates for stat changes and pod generation
 static private function PatchEnemyTemplates(X2DataTemplate DataTemplate)
 {
 	local X2CharacterTemplate	CharacterTemplate;
@@ -415,44 +418,66 @@ static private function PatchEnemyTemplates(X2DataTemplate DataTemplate)
 	local float					OldStat;
 	local float					NewStat;
 	local name					SectopodName;
+	local EnemyRandoEntry		Entry;
 	local int					Idx;
 	local name					SupportedFollower;
 	local bool					bPatched;
 
 	CharacterTemplate = X2CharacterTemplate(DataTemplate);
 
-	foreach class'WOTCArchipelago_Spoiler'.default.CharStatChanges(StatChange)
+	// Patch shuffled enemies
+	if (class'WOTCArchipelago_Spoiler'.static.IsEnemyShuffled(CharacterTemplate.DataName))
 	{
-		if (StatChange.TemplateName == CharacterTemplate.DataName)
+		// Change stats
+		foreach class'WOTCArchipelago_Spoiler'.default.CharStatChanges(StatChange)
 		{
-			OldStat = CharacterTemplate.CharacterBaseStats[StatChange.StatType];
-			NewStat = Clamp(OldStat + StatChange.Delta, StatChange.Minimum, StatChange.Maximum);
-			CharacterTemplate.CharacterBaseStats[StatChange.StatType] = NewStat;
+			if (StatChange.TemplateName == CharacterTemplate.DataName)
+			{
+				OldStat = CharacterTemplate.CharacterBaseStats[StatChange.StatType];
+				NewStat = Clamp(OldStat + StatChange.Delta, StatChange.Minimum, StatChange.Maximum);
+				CharacterTemplate.CharacterBaseStats[StatChange.StatType] = NewStat;
+				bPatched = true;
+			}
+		}
+
+		// Edit action points for Sectopod and its replacement
+		SectopodName = 'Sectopod';
+		class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SectopodName);
+	
+		if (CharacterTemplate.DataName == 'Sectopod' && CharacterTemplate.DataName != SectopodName)
+		{
+			CharacterTemplate.Abilities.AddItem('RemoveActionPoint');
 			bPatched = true;
 		}
-	}
+		if (CharacterTemplate.DataName != 'Sectopod' && CharacterTemplate.DataName == SectopodName)
+		{
+			CharacterTemplate.Abilities.AddItem('NeverConsumeAllPoints');
+			bPatched = true;
+		}
 
-	// Edit Action Points for Sectopod and its replacement
-	SectopodName = 'Sectopod';
-	class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SectopodName);
-	
-	if (CharacterTemplate.DataName == 'Sectopod' && CharacterTemplate.DataName != SectopodName)
-	{
-		CharacterTemplate.Abilities.AddItem('RemoveActionPoint');
-		bPatched = true;
-	}
-	if (CharacterTemplate.DataName != 'Sectopod' && CharacterTemplate.DataName == SectopodName)
-	{
-		CharacterTemplate.Abilities.AddItem('NeverConsumeAllPoints');
-		bPatched = true;
-	}
+		// Remove character cap
+		CharacterTemplate.MaxCharactersPerGroup = 4;
 
-	// Alter Supported Followers
-	for (Idx = 0; Idx < CharacterTemplate.SupportedFollowers.Length; Idx++)
+		// Expand supported followers
+		foreach class'WOTCArchipelago_Spoiler'.default.EnemyRando(Entry)
+		{
+			if (CharacterTemplate.SupportedFollowers.Find(Entry.DefaultTemplateName) == INDEX_NONE)
+			{
+				CharacterTemplate.SupportedFollowers.AddItem(Entry.DefaultTemplateName);
+				bPatched = true;
+			}
+		}
+	}
+	// Patch non-shuffled enemies
+	else
 	{
-		SupportedFollower = CharacterTemplate.SupportedFollowers[Idx];
-		bPatched = bPatched || class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SupportedFollower);
-		CharacterTemplate.SupportedFollowers[Idx] = SupportedFollower;
+		// Alter supported followers
+		for (Idx = 0; Idx < CharacterTemplate.SupportedFollowers.Length; Idx++)
+		{
+			SupportedFollower = CharacterTemplate.SupportedFollowers[Idx];
+			bPatched = bPatched || class'WOTCArchipelago_Spoiler'.static.ApplyEnemyRando(SupportedFollower);
+			CharacterTemplate.SupportedFollowers[Idx] = SupportedFollower;
+		}
 	}
 
 	if (bPatched) `AMLOG("Patched " $ CharacterTemplate.Name);

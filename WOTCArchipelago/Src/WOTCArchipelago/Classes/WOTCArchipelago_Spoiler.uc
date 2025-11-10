@@ -39,6 +39,24 @@ static function bool GetSpoilerEntryByLocation(name LocationName, out SpoilerEnt
 	return false;
 }
 
+static function bool IsEnemyRandoActive()
+{
+	return (default.EnemyRando.Length > 0);
+}
+
+static function bool IsEnemyShuffled(name TemplateName)
+{
+	local EnemyRandoEntry Entry;
+
+	foreach default.EnemyRando(Entry)
+	{
+		if (Entry.OverrideTemplateName == TemplateName)
+			return true;
+	}
+
+	return false;
+}
+
 static function bool ApplyEnemyRando(out name TemplateName)
 {
 	local EnemyRandoEntry Entry;
