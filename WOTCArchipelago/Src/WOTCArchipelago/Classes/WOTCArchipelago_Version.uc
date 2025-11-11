@@ -1,8 +1,9 @@
 class WOTCArchipelago_Version extends Object config(WOTCArchipelago);
 
 var config string ModVersion;
+var config string MinimumClientVersion;
 var config string ClientVersion;
-var config string RecModVersion;
+var config string MinimumModVersion;
 
 static function string GetModVersion()
 {
@@ -11,17 +12,31 @@ static function string GetModVersion()
 
 static function bool CanCheckVersion()
 {
-	return !(default.ClientVersion == "" || default.RecModVersion == "");
+	return !(default.ClientVersion == "" || default.MinimumModVersion == "");
+}
+
+static function bool IsVersionValid(string Version, string MinimumVersion)
+{
+	local array<string>		VersionValues;
+	local array<string>		MinimumVersionValues;
+	local int				Idx;
+
+	VersionValues = SplitString(Version, ".", true);
+	MinimumVersionValues = SplitString(MinimumVersion, ".", true);
+
+	for (Idx = 0; Idx < Min(VersionValues.Length, MinimumVersionValues.Length); Idx++)
+	{
+		if (VersionValues[Idx] > MinimumVersionValues[Idx]) return true;
+		else if (VersionValues[Idx] < MinimumVersionValues[Idx]) return false;
+	}
+
+	// All values are equal
+	return true;
 }
 
 static function bool CheckVersion(optional bool bDebug = true)
 {
-	local array<string>		ModVersionValues;
-	local array<string>		RecModVersions;
-	local array<string>		RecModVersionValues;
-	local bool				bValid;
-	local int				Idx;
-	local int				Jdx;
+	if (bDebug) `AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion);
 
 	if (!CanCheckVersion())
 	{
@@ -30,30 +45,19 @@ static function bool CheckVersion(optional bool bDebug = true)
 		return false;
 	}
 
-	ModVersionValues = SplitString(default.ModVersion, ".", true);
-	RecModVersions = SplitString(default.RecModVersion, "/", true);
-
-	bValid = false;
-	for (Idx = 0; Idx < RecModVersions.Length; Idx++)
+	if (!IsVersionValid(default.ModVersion, default.MinimumModVersion))
 	{
-		RecModVersionValues = SplitString(RecModVersions[Idx], ".", true);
-
-		for (Jdx = 0; Jdx < Min(ModVersionValues.Length, RecModVersionValues.Length); Jdx++)
-		{
-			bValid = ModVersionValues[Jdx] == RecModVersionValues[Jdx] || RecModVersionValues[Jdx] == "x";
-			if (!bValid) break;
-		}
-
-		if (bValid) break;
+		if (bDebug)
+			`ERROR("Client version " $ default.ClientVersion $ " requires at least mod version " $ default.MinimumModVersion);
+		return false;
 	}
 
-	if (bDebug)
+	if (!IsVersionValid(default.ClientVersion, default.MinimumClientVersion))
 	{
-		if (!bValid)
-			`ERROR("Incompatible client (" $ default.ClientVersion $ ") and mod (" $ default.ModVersion $ ") versions.");
-		else
-			`AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion);
+		if (bDebug)
+			`ERROR("Mod version " $ default.ModVersion $ " requires at least client version " $ default.MinimumClientVersion);
+		return false;
 	}
 
-	return bValid;
+	return true;
 }
