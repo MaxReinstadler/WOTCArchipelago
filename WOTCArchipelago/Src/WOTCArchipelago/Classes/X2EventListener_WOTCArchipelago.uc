@@ -62,23 +62,27 @@ static private function SendUnitKillCheck(XComGameState NewGameState, XComGameSt
 	local name				CharacterTemplateName;
 	local name				CharacterGroupName;
 	local CustomGroup		Group;
+	local bool				bCustomGroupChecked;
 
 	CharacterTemplateName = UnitState.GetMyTemplateName();
 	CharacterGroupName = UnitState.GetMyTemplateGroupName();
-
-	// Check Default Character Groups
-	if (default.CheckKillIgnoreDefaultGroup.Find(CharacterTemplateName) == INDEX_NONE)
-	{
-		if (default.CheckKillDefaultCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
-			`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ CharacterGroupName));
-	}
 
 	// Check Custom Character Groups
 	foreach default.CheckKillCustomCharacterGroups(Group)
 	{
 		if (Group.Members.Find(CharacterTemplateName) != INDEX_NONE)
+		{
 			`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ Group.GroupName));
+			bCustomGroupChecked = true;
+		}
 	}
+
+	if (bCustomGroupChecked) return;
+	if (default.CheckKillIgnoreDefaultGroup.Find(CharacterTemplateName) != INDEX_NONE) return;
+
+	// Check Default Character Groups
+	if (default.CheckKillDefaultCharacterGroups.Find(CharacterGroupName) != INDEX_NONE)
+		`APCLIENT.OnCheckReached(NewGameState, name("Kill" $ CharacterGroupName));
 }
 
 static private function DistributeExtraXP(XComGameState NewGameState, XComGameState_Unit EnemyState)
