@@ -6,7 +6,10 @@
 //           that extends X2DownloadableContentInfo adds a tiny performance cost.
 //---------------------------------------------------------------------------------------
 
-class X2DLCInfo_WOTCArchipelago extends X2DownloadableContentInfo;
+class X2DLCInfo_WOTCArchipelago extends X2DownloadableContentInfo config(WOTCArchipelago);
+
+var config bool bRemoveScienceRequirements;
+var config bool bRemoveEngineeringRequirements;
 
 delegate ModifyTemplate(X2DataTemplate DataTemplate);
 
@@ -111,6 +114,10 @@ static private function PatchResearchTemplates(X2DataTemplate DataTemplate)
 	// Enable pop-ups for AlienBiotech and AutopsyAdventOfficer
 	TechTemplate.bJumpToLabs = false;
 
+	// Remove science requirement
+	if (default.bRemoveScienceRequirements)
+		TechTemplate.Requirements.RequiredScienceScore = 0;
+
 	`AMLOG("Patched " $ TechTemplate.Name $ " (" $ CompletionItemTemplate.DataName $ ")");
 }
 
@@ -173,6 +180,10 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 		if (Idx == -1) ItemTemplate.Requirements = Requirements;
 		else ItemTemplate.AlternateRequirements[Idx] = Requirements;
 	}
+
+	// Remove engineering requirement
+	if (default.bRemoveEngineeringRequirements && bPatched)
+		ItemTemplate.Requirements.RequiredEngineeringScore = 0;
 
 	if (bPatched) `AMLOG("Patched " $ ItemTemplate.Name);
 }
