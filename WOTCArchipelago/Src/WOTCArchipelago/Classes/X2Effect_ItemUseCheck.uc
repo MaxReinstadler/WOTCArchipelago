@@ -16,27 +16,12 @@ var config array<name>				CheckUseItems;
 var config array<ItemCategory>		CheckUseItemCategories;
 var config array<CheckInventory>	CheckUseItemInInventory;
 
-simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffectParameters, XComGameState_BaseObject kNewTargetState, XComGameState NewGameState, XComGameState_Effect NewEffectState)
-{
-	local XComGameState_Item SourceWeapon;
-	local XComGameState_Item AmmoState;
-
-	SourceWeapon = XComGameState_Item(NewGameState.GetGameStateForObjectID(ApplyEffectParameters.ItemStateObjectRef.ObjectID));
-	if (SourceWeapon == none)
-		SourceWeapon = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(ApplyEffectParameters.ItemStateObjectRef.ObjectID));
-
-	AmmoState = XComGameState_Item(NewGameState.GetGameStateForObjectID(SourceWeapon.LoadedAmmo.ObjectID));
-	if (AmmoState == none)
-		AmmoState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(SourceWeapon.LoadedAmmo.ObjectID));
-
-	CheckItem(NewGameState, AmmoState.GetMyTemplateName());
-}
-
 simulated function ApplyEffectToWorld(const out EffectAppliedData ApplyEffectParameters, XComGameState NewGameState)
 {
 	local XComGameState_Ability		SourceAbility;
 	local XComGameState_Unit		SourceUnit;
-	local XComGameState_Item		SourceItem;
+	local XComGameState_Item		SourceWeapon;
+	local XComGameState_Item		SourceWeaponAmmo;
 	local XComGameState_Item		SourceAmmo;
 
 	SourceAbility = XComGameState_Ability(NewGameState.GetGameStateForObjectID(ApplyEffectParameters.AbilityStateObjectRef.ObjectID));
@@ -47,18 +32,29 @@ simulated function ApplyEffectToWorld(const out EffectAppliedData ApplyEffectPar
 	if (SourceUnit == none)
 		SourceUnit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(SourceAbility.OwnerStateObject.ObjectID));
 
-	SourceItem = XComGameState_Item(NewGameState.GetGameStateForObjectID(SourceAbility.SourceWeapon.ObjectID));
-	if (SourceItem == none)
-		SourceItem = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(SourceAbility.SourceWeapon.ObjectID));
+	SourceWeapon = XComGameState_Item(NewGameState.GetGameStateForObjectID(SourceAbility.SourceWeapon.ObjectID));
+	if (SourceWeapon == none)
+		SourceWeapon = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(SourceAbility.SourceWeapon.ObjectID));
+
+	SourceWeaponAmmo = XComGameState_Item(NewGameState.GetGameStateForObjectID(SourceWeapon.LoadedAmmo.ObjectID));
+	if (SourceWeaponAmmo == none)
+		SourceWeaponAmmo = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(SourceWeapon.LoadedAmmo.ObjectID));
 
 	SourceAmmo = XComGameState_Item(NewGameState.GetGameStateForObjectID(SourceAbility.SourceAmmo.ObjectID));
 	if (SourceAmmo == none)
 		SourceAmmo = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(SourceAbility.SourceAmmo.ObjectID));
 
-	CheckItem(NewGameState, SourceItem.GetMyTemplateName());
+	// Only friendly units can send checks
+	if (SourceUnit.GetTeam() != eTeam_XCom) return;
 
-	// If item is a grenade launcher, check ammo (= grenade) as well
-	if (ClassIsChildOf(SourceItem.GetMyTemplate().Class, class'X2GrenadeLauncherTemplate'))
+	// Regular item check
+	CheckItem(NewGameState, SourceWeapon.GetMyTemplateName());
+
+	// Weapon ammo check
+	CheckItem(NewGameState, SourceWeaponAmmo.GetMyTemplateName());
+
+	// If weapon is a grenade launcher, check ammo (= grenade) as well
+	if (ClassIsChildOf(SourceWeapon.GetMyTemplate().Class, class'X2GrenadeLauncherTemplate'))
 		CheckItem(NewGameState, SourceAmmo.GetMyTemplateName());
 
 	// Check ability in case of inventory exception
