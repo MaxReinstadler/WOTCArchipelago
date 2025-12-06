@@ -73,10 +73,6 @@ static event OnPostTemplatesCreated()
 
 	// ITEMSANITY
 
-	// Patch ammo templates to add item use check effect
-	`AMLOG("Patching Ammo Templates");
-	IterateTemplatesAllDiff(class'X2AmmoTemplate', PatchAmmoTemplates);
-
 	// Patch ability templates to add item use check effect
 	`AMLOG("Patching Ability Templates");
 	IterateTemplatesAllDiff(class'X2AbilityTemplate', PatchAbilityTemplates);
@@ -375,17 +371,6 @@ static private function PatchCovertActionTemplates(X2DataTemplate DataTemplate)
 		CovertActionTemplate.Rewards = NewRewards;
 		`AMLOG("Patched " $ CovertActionTemplate.Name);
 	}
-}
-
-// Patch ammo templates to add item use check effect
-static private function PatchAmmoTemplates(X2DataTemplate DataTemplate)
-{
-	local X2AmmoTemplate AmmoTemplate;
-
-	AmmoTemplate = X2AmmoTemplate(DataTemplate);
-	AmmoTemplate.TargetEffects.AddItem(new class'X2Effect_ItemUseCheck');
-
-	`AMLOG("Patched " $ AmmoTemplate.Name);
 }
 
 // Patch ability templates to add item use check effect
