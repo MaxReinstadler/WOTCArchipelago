@@ -111,7 +111,7 @@ static private function PatchResearchTemplates(X2DataTemplate DataTemplate)
 	TechTemplate.bJumpToLabs = false;
 
 	// Remove science requirement
-	if (default.bRemoveScienceRequirements)
+	if (default.bRemoveScienceRequirements && TechTemplate.Requirements.RequiredScienceScore < 99999)
 		TechTemplate.Requirements.RequiredScienceScore = 0;
 
 	`AMLOG("Patched " $ TechTemplate.Name $ " (" $ CompletionItemTemplate.DataName $ ")");
@@ -178,7 +178,7 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 	}
 
 	// Remove engineering requirement
-	if (default.bRemoveEngineeringRequirements && bPatched)
+	if (default.bRemoveEngineeringRequirements && bPatched && ItemTemplate.Requirements.RequiredEngineeringScore < 99999)
 		ItemTemplate.Requirements.RequiredEngineeringScore = 0;
 
 	if (bPatched) `AMLOG("Patched " $ ItemTemplate.Name);
