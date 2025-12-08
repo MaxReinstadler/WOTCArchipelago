@@ -30,6 +30,9 @@ var config float DEF_EXTRA_XP_MULT;
 // Increase corpse gain
 var config int DEF_EXTRA_CORPSES;
 
+// Instant rookie training
+var config bool DEF_INSTANT_ROOKIE_TRAINING;
+
 // Disable day 1 traps
 var config bool DEF_NO_STARTING_TRAPS;
 

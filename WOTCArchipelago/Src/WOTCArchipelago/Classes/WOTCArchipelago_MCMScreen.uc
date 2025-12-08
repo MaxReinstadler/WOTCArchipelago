@@ -1,6 +1,10 @@
 class WOTCArchipelago_MCMScreen extends Object config(WOTCArchipelago_Settings);
 
 
+var array<int>	ConfigDefaultTrainRookieDays;
+var bool		bSavedConfigDefaultTrainRookieDays;
+
+
 var localized string strMenuPageTitle;
 var localized string strSettingsPageTitle;
 
@@ -43,6 +47,9 @@ var config string CFG_AP_GEN_ID;
 // Increase corpse gain
 `MCM_API_SliderVars(EXTRA_CORPSES, int);
 
+// Instant rookie training
+`MCM_API_CheckboxVars(INSTANT_ROOKIE_TRAINING);
+
 // Disable day 1 traps
 `MCM_API_CheckboxVars(NO_STARTING_TRAPS);
 
@@ -68,6 +75,8 @@ var config int CFG_VERSION;
 `MCM_API_SliderFns(EXTRA_XP_MULT, float);
 
 `MCM_API_SliderFns(EXTRA_CORPSES, int);
+
+`MCM_API_CheckboxFns(INSTANT_ROOKIE_TRAINING);
 
 `MCM_API_CheckboxFns(NO_STARTING_TRAPS);
 
@@ -111,6 +120,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AddSlider(GroupDuration, SKIP_RAID_REWARD_MULT_ERR, 0.0f, 1.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, 0.0f, 2.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, 0, 5, 1);
+	`MCM_API_AddCheckbox(GroupDuration, INSTANT_ROOKIE_TRAINING);
 
 	GroupTraps = Page.AddGroup('Traps', default.strGroupTraps);
 	`MCM_API_AddCheckbox(GroupTraps, NO_STARTING_TRAPS);
@@ -139,6 +149,8 @@ simulated function LoadSavedSettings()
 
 	`MCM_API_LoadSetting(EXTRA_CORPSES);
 
+	`MCM_API_LoadSetting(INSTANT_ROOKIE_TRAINING);
+
 	`MCM_API_LoadSetting(NO_STARTING_TRAPS);
 }
 
@@ -163,6 +175,8 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 
 	`MCM_API_RestoreDefault(EXTRA_CORPSES);
 
+	`MCM_API_RestoreDefault(INSTANT_ROOKIE_TRAINING);
+
 	`MCM_API_RestoreDefault(NO_STARTING_TRAPS);
 }
 
@@ -170,6 +184,8 @@ simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
 {
     CFG_VERSION = `MCM_CH_GetCompositeVersion();
     SaveConfig();
+
+	UpdateTrainRookieDays();
 }
 
 static private function bool ShouldLoadAPDefaults()
@@ -185,33 +201,65 @@ static private function bool ShouldLoadAPDefaults()
 
 static function LoadAndSaveAPDefaults()
 {
-	if (!ShouldLoadAPDefaults()) return;
+	if (ShouldLoadAPDefaults())
+	{
+		`MCM_API_LoadAPDefault(AP_GEN_ID);
 
-	`MCM_API_LoadAPDefault(AP_GEN_ID);
+		default.CFG_DEBUG_LOGGING = `APCFG(DEBUG_LOGGING);
 
-	default.CFG_DEBUG_LOGGING = `APCFG(DEBUG_LOGGING);
+		`MCM_API_LoadAPDefault(HINT_TECH_LOC_PART);
+		`MCM_API_LoadAPDefault(HINT_TECH_LOC_FULL);
 
-	`MCM_API_LoadAPDefault(HINT_TECH_LOC_PART);
-	`MCM_API_LoadAPDefault(HINT_TECH_LOC_FULL);
+		`MCM_API_LoadAPDefault(SKIP_SUPPLY_RAIDS);
+		`MCM_API_LoadAPDefault(SKIP_COUNCIL_MISSIONS);
+		`MCM_API_LoadAPDefault(SKIP_FACTION_MISSIONS);
 
-	`MCM_API_LoadAPDefault(SKIP_SUPPLY_RAIDS);
-	`MCM_API_LoadAPDefault(SKIP_COUNCIL_MISSIONS);
-	`MCM_API_LoadAPDefault(SKIP_FACTION_MISSIONS);
+		`MCM_API_LoadAPDefault(DISABLE_AMBUSH_RISK);
+		`MCM_API_LoadAPDefault(DISABLE_CAPTURE_RISK);
 
-	`MCM_API_LoadAPDefault(DISABLE_AMBUSH_RISK);
-	`MCM_API_LoadAPDefault(DISABLE_CAPTURE_RISK);
+		`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_BASE);
+		`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_ERR);
 
-	`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_BASE);
-	`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_ERR);
+		`MCM_API_LoadAPDefault(EXTRA_XP_MULT);
 
-	`MCM_API_LoadAPDefault(EXTRA_XP_MULT);
+		`MCM_API_LoadAPDefault(EXTRA_CORPSES);
 
-	`MCM_API_LoadAPDefault(EXTRA_CORPSES);
+		`MCM_API_LoadAPDefault(INSTANT_ROOKIE_TRAINING);
 
-	`MCM_API_LoadAPDefault(NO_STARTING_TRAPS);
+		`MCM_API_LoadAPDefault(NO_STARTING_TRAPS);
 
-	default.CFG_VERSION = `MCM_CH_GetCompositeVersion();
-	class'WOTCArchipelago_MCMScreen'.static.StaticSaveConfig();
+		default.CFG_VERSION = `MCM_CH_GetCompositeVersion();
+		class'WOTCArchipelago_MCMScreen'.static.StaticSaveConfig();
 
-	`AMLOG("Loaded and saved AP defaults for recognized new generation " $ default.CFG_AP_GEN_ID);
+		`AMLOG("Loaded and saved AP defaults for recognized new slot " $ default.CFG_AP_GEN_ID);
+	}
+
+	UpdateTrainRookieDays();
+}
+
+// Set default train rookie days of XComHQ's CDO on load and save
+static private function UpdateTrainRookieDays()
+{
+	local WOTCArchipelago_MCMScreen			MCMScreenCDO;
+	local XComGameState_HeadquartersXCom	XComHQCDO;
+	local int								Idx;
+
+	MCMScreenCDO = WOTCArchipelago_MCMScreen(class'Engine'.static.FindClassDefaultObject("WOTCArchipelago_MCMScreen"));
+	XComHQCDO = XComGameState_HeadquartersXCom(class'Engine'.static.FindClassDefaultObject("XComGameState_HeadquartersXCom"));
+
+	if (!MCMScreenCDO.bSavedConfigDefaultTrainRookieDays)
+	{
+		for (Idx = 0; Idx < XComHQCDO.XComHeadquarters_DefaultTrainRookieDays.Length; Idx++)
+			MCMScreenCDO.ConfigDefaultTrainRookieDays[Idx] = XComHQCDO.XComHeadquarters_DefaultTrainRookieDays[Idx];
+
+		MCMScreenCDO.bSavedConfigDefaultTrainRookieDays = true;
+	}
+
+	for (Idx = 0; Idx < XComHQCDO.XComHeadquarters_DefaultTrainRookieDays.Length; Idx++)
+	{
+		if (`APCFG(INSTANT_ROOKIE_TRAINING))
+			XComHQCDO.XComHeadquarters_DefaultTrainRookieDays[Idx] = 0;
+		else
+			XComHQCDO.XComHeadquarters_DefaultTrainRookieDays[Idx] = MCMScreenCDO.ConfigDefaultTrainRookieDays[Idx];
+	}
 }

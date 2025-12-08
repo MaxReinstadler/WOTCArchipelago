@@ -46,6 +46,8 @@ EXTRA_XP_MULT_LABEL="Increase XP Gain"
 EXTRA_XP_MULT_DESC="All soldiers passively gain extra XP on missions."
 EXTRA_CORPSES_LABEL="Increase Corpse Gain"
 EXTRA_CORPSES_DESC="Gain additional corpses for each enemy killed."
+INSTANT_ROOKIE_TRAINING_LABEL="Instant Rookie Training"
+INSTANT_ROOKIE_TRAINING_DESC="Training rookies in the GTS is instant."
 
 strGroupTraps="Traps"
 NO_STARTING_TRAPS_LABEL="Disable Day One Traps"
