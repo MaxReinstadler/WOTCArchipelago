@@ -377,12 +377,23 @@ static private function PatchCovertActionTemplates(X2DataTemplate DataTemplate)
 static private function PatchAbilityTemplates(X2DataTemplate DataTemplate)
 {
 	local X2AbilityTemplate AbilityTemplate;
+	local X2AbilityCost AbilityCost;
+	local X2AbilityCost_Ammo AmmoCost;
 
 	AbilityTemplate = X2AbilityTemplate(DataTemplate);
-	if (AbilityTemplate.eAbilityIconBehaviorHUD == eAbilityIconBehavior_NeverShow) return;
-	AbilityTemplate.AddShooterEffect(new class'X2Effect_ItemUseCheck');
+	// if (AbilityTemplate.eAbilityIconBehaviorHUD == eAbilityIconBehavior_NeverShow) return;
+	if (default.SkipUseAmmoCheckAbilities.Find(AbilityTemplate.DataName) != INDEX_NONE) return;
+	foreach AbilityTemplate.AbilityCosts(AbilityCost)
+	{
+		AmmoCost = X2AbilityCost_Ammo(AbilityCost);
+		if (AmmoCost == none) continue;
+		if (AmmoCost.iAmmo > 0 && !AmmoCost.bFreeCost)
+		{
+			AbilityTemplate.AddShooterEffect(new class'X2Effect_ItemUseCheck');
+			`AMLOG("Patched " $ AbilityTemplate.Name);
+		}
+	}
 
-	`AMLOG("Patched " $ AbilityTemplate.Name);
 }
 
 // Patch spawn unit ability templates to alter spawned unit
