@@ -15,6 +15,8 @@ struct native CheckInventory
 var config array<name>				CheckUseItems;
 var config array<ItemCategory>		CheckUseItemCategories;
 var config array<CheckInventory>	CheckUseItemInInventory;
+var config array<name>				CheckUseItemExcludeAbilities;
+var config array<name>				CheckUseItemIncludeAbilities;
 
 simulated function ApplyEffectToWorld(const out EffectAppliedData ApplyEffectParameters, XComGameState NewGameState)
 {

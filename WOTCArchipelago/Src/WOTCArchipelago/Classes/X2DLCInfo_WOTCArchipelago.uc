@@ -379,10 +379,13 @@ static private function PatchAbilityTemplates(X2DataTemplate DataTemplate)
 	local X2AbilityTemplate AbilityTemplate;
 
 	AbilityTemplate = X2AbilityTemplate(DataTemplate);
-	if (AbilityTemplate.eAbilityIconBehaviorHUD == eAbilityIconBehavior_NeverShow) return;
-	AbilityTemplate.AddShooterEffect(new class'X2Effect_ItemUseCheck');
-
-	`AMLOG("Patched " $ AbilityTemplate.Name);
+	if (class'X2Effect_ItemUseCheck'.default.CheckUseItemExcludeAbilities.Find(AbilityTemplate.DataName) == INDEX_NONE
+		&& (class'X2Effect_ItemUseCheck'.default.CheckUseItemIncludeAbilities.Find(AbilityTemplate.DataName) != INDEX_NONE
+			|| AbilityTemplate.eAbilityIconBehaviorHUD != eAbilityIconBehavior_NeverShow))
+	{
+		AbilityTemplate.AddShooterEffect(new class'X2Effect_ItemUseCheck');
+		`AMLOG("Patched " $ AbilityTemplate.Name);
+	}
 }
 
 // Patch spawn unit ability templates to alter spawned unit
