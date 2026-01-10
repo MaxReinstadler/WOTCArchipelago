@@ -218,13 +218,60 @@ static private function PatchStrategyElementTemplates(X2DataTemplate DataTemplat
 		ObjectiveTemplate = X2ObjectiveTemplate(DataTemplate);
 		Requirements = ObjectiveTemplate.CompletionRequirements;
 
-		// Alter Avatar Autopsy requirements
-		if (ObjectiveTemplate.Name == 'T5_M1_AutopsyTheAvatar')
+		// Alter and sctreamline story objectives
+		switch (ObjectiveTemplate.DataName)
 		{
-			ObjectiveTemplate.AssignmentRequirements.RequiredObjectives.RemoveItem('T1_M6_S0_RecoverAvatarCorpse');
-			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('PsiGateObjectiveCompleted');
-			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('StasisSuitObjectiveCompleted');
-			ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('AvatarCorpseObjectiveCompleted');
+			case 'T0_M0_TutorialFirstMission':
+				ObjectiveTemplate.NextObjectives.AddItem('T1_M1_AutopsyACaptainTutorial');
+				ObjectiveTemplate.NextObjectives.AddItem('T3_M1_ResearchAlienEncryption');
+				// Narrative triggers are unchanged for tutorial objectives
+				break;
+			case 'T1_M0_FirstMission':
+				ObjectiveTemplate.NextObjectives.AddItem('T1_M1_AutopsyACaptain');
+				ObjectiveTemplate.NextObjectives.AddItem('T3_M1_ResearchAlienEncryption');
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Annoying cutscenes
+				break;
+			case 'T1_M1_AlienBiotech':
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Irrelevant nag
+				break;
+			case 'T1_M1_AutopsyACaptain':
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Immediate cutscene, jump to labs, irrelevant nag
+				break;
+			case 'T1_M2_S1_BuildProvingGrounds':
+				ObjectiveTemplate.RevealEvent = '';  // Originally 'OnEnteredFacility_PowerCore'
+				break;
+			case 'T1_M4_S1_StudyCodexBrainPt1':
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Irrelevant nag
+				break;
+			case 'T1_M4_S1_StudyCodexBrainPt2':
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				break;
+			case 'T2_M2_StudyBlacksiteData':
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Irrelevant nag
+				break;
+			case 'T2_M4_BuildStasisSuit':
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				break;
+			case 'T3_M1_ResearchAlienEncryption':
+				ObjectiveTemplate.RevealEvent = '';  // Originally 'PostMissionDone'
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Immediate pop-up
+				break;
+			case 'T3_M2_BuildShadowChamber':
+				ObjectiveTemplate.RevealEvent = '';  // Originally 'OnLabsExit'
+				break;
+			case 'T4_M2_S2_ResearchPsiGate':
+				ObjectiveTemplate.InProgressFn = ReturnTrue;
+				ObjectiveTemplate.NarrativeTriggers.Length = 0;  // Irrelevant nag
+				break;
+			case 'T5_M1_AutopsyTheAvatar':
+				ObjectiveTemplate.AssignmentRequirements.RequiredObjectives.RemoveItem('T1_M6_S0_RecoverAvatarCorpse');
+				ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('PsiGateObjectiveCompleted');
+				ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('StasisSuitObjectiveCompleted');
+				ObjectiveTemplate.CompletionRequirements.RequiredItems.AddItem('AvatarCorpseObjectiveCompleted');
 		}
 	}
 	else
@@ -263,6 +310,11 @@ static private function PatchStrategyElementTemplates(X2DataTemplate DataTemplat
 	}
 
 	if (bPatched) `AMLOG("Patched " $ DataTemplate.Name);
+}
+
+static private function bool ReturnTrue()
+{
+	return true;
 }
 
 // Patch proving ground projects to alter unlock requirements
