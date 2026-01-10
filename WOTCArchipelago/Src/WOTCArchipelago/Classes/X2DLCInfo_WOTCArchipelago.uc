@@ -114,6 +114,10 @@ static private function PatchResearchTemplates(X2DataTemplate DataTemplate)
 	if (default.bRemoveScienceRequirements && TechTemplate.Requirements.RequiredScienceScore < 99999)
 		TechTemplate.Requirements.RequiredScienceScore = 0;
 
+	// Don't consume quest items
+	if (TechTemplate.DataName == 'BlacksiteData' || TechTemplate.DataName == 'ForgeStasisSuit')
+		TechTemplate.Cost.ArtifactCosts.Length = 0;
+
 	`AMLOG("Patched " $ TechTemplate.Name $ " (" $ CompletionItemTemplate.DataName $ ")");
 }
 
