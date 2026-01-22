@@ -10,6 +10,7 @@ class X2DLCInfo_WOTCArchipelago extends X2DownloadableContentInfo config(WOTCArc
 
 var config bool bRemoveScienceRequirements;
 var config bool bRemoveEngineeringRequirements;
+var config bool bRemoveCorpseCosts;
 
 delegate ModifyTemplate(X2DataTemplate DataTemplate);
 
@@ -184,6 +185,19 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 	// Remove engineering requirement
 	if (default.bRemoveEngineeringRequirements && bPatched && ItemTemplate.Requirements.RequiredEngineeringScore < 99999)
 		ItemTemplate.Requirements.RequiredEngineeringScore = 0;
+
+	// Remove corpse cost
+	if (default.bRemoveCorpseCosts)
+	{
+		for (Idx = 0; Idx < ItemTemplate.Cost.ArtifactCosts.Length; Idx++)
+		{
+			if (Caps(Left(string(ItemTemplate.Cost.ArtifactCosts[Idx].ItemTemplateName), 6)) == "CORPSE")
+			{
+				ItemTemplate.Cost.ArtifactCosts[Idx].Quantity = 0;
+				bPatched = true;
+			}
+		}
+	}
 
 	if (bPatched) `AMLOG("Patched " $ ItemTemplate.Name);
 }
