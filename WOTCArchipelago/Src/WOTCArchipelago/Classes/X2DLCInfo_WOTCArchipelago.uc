@@ -154,6 +154,7 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 	local name							ReqTechTemplateName;
 	local X2CompletionItemTemplate		CompletionItemTemplate;
 	local name							CompletionItemTemplateName;
+	local array<ArtifactCost>			CorpseCosts;
 	local bool							bPatched;
 
 	ItemTemplate = X2ItemTemplate(DataTemplate);
@@ -193,10 +194,12 @@ static private function PatchItemTemplates(X2DataTemplate DataTemplate)
 		{
 			if (Caps(Left(string(ItemTemplate.Cost.ArtifactCosts[Idx].ItemTemplateName), 6)) == "CORPSE")
 			{
-				ItemTemplate.Cost.ArtifactCosts[Idx].Quantity = 0;
+				CorpseCosts.AddItem(ItemTemplate.Cost.ArtifactCosts[Idx]);
 				bPatched = true;
 			}
 		}
+
+		for (Idx = 0; Idx < CorpseCosts.Length; Idx++) ItemTemplate.Cost.ArtifactCosts.RemoveItem(CorpseCosts[Idx]);
 	}
 
 	if (bPatched) `AMLOG("Patched " $ ItemTemplate.Name);
