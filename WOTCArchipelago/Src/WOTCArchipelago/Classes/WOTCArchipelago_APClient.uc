@@ -14,7 +14,6 @@ var private int SinceLastTick;
 var private string TechCompletedType;
 var private string CovertActionRewardType;
 var private string ResourceType;
-var private string WeaponModType;
 var private string StaffType;
 var private string TrapType;
 
@@ -74,7 +73,6 @@ private function Initialize()
 	TechCompletedType = "[TechCompleted]";
 	CovertActionRewardType = "[CovertActionReward]";
 	ResourceType = "[Resource]";
-	WeaponModType = "[WeaponMod]";
 	StaffType = "[Staff]";
 	TrapType = "[Trap]";
 }
@@ -437,15 +435,6 @@ private final function HandleMessage(string Message)
 
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding resource item to HQ inventory");
 		AddItemToHQInventory(NewGameState, ItemName, ItemValue);
-		`GAMERULES.SubmitGameState(NewGameState);
-	}
-	// WeaponMod
-	else if (Left(Lines[0], Len(WeaponModType)) == WeaponModType)
-	{
-		ItemName = name(Mid(Lines[0], Len(WeaponModType)));
-
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Adding weapon mod item to HQ inventory");
-		AddItemToHQInventory(NewGameState, ItemName);
 		`GAMERULES.SubmitGameState(NewGameState);
 	}
 	// Staff
