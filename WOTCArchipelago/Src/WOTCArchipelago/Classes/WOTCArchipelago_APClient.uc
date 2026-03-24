@@ -10,6 +10,7 @@ var string CustomPopupTitle;
 var string CustomPopupText;
 
 var private int SinceLastTick;
+var private WOTCArchipelago_TcpLink TickLink;
 
 var private string TechCompletedType;
 var private string CovertActionRewardType;
@@ -69,6 +70,7 @@ private function Initialize()
 	CustomPopupText = "";
 
 	SinceLastTick = 0;
+	TickLink = Spawn(class'WOTCArchipelago_TcpLink');
 
 	TechCompletedType = "[TechCompleted]";
 	CovertActionRewardType = "[CovertActionReward]";
@@ -118,8 +120,6 @@ private final function CheckResponseHandler(WOTCArchipelago_TcpLink Link, HttpRe
 
 private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
-	local name CheckName;
-
 	`AMLOG("Check Error Status: " $ Resp.ResponseCode);
 
 	// Client can not be reached
@@ -133,11 +133,30 @@ private final function CheckErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespo
 		RaiseDialog(default.strClientDisconnected, default.strClientDisconnectedDetails);
 	}
 
-	// Add check to re-send buffer
-	CheckName = Link.GetCheckName();
-	if (CheckBuffer.Find(CheckName) == INDEX_NONE) CheckBuffer.AddItem(CheckName);
-	
+	AppendCheckBuffer(Link.GetCheckName());
 	Link.Destroy();
+}
+
+private final function AppendCheckBuffer(name CheckName)
+{
+	if (CheckBuffer.Find(CheckName) == INDEX_NONE) CheckBuffer.AddItem(CheckName);
+}
+
+private final function ClearCheckBuffer()
+{
+	local XComGameState		NewGameState;
+	local name				CheckName;
+
+	while (CheckBuffer.Length > 0)
+	{
+		CheckName = CheckBuffer[0];
+
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Re-send check " $ CheckName $ " from buffer");
+		OnCheckReached(NewGameState, CheckName);
+		`GAMERULES.SubmitGameState(NewGameState);
+
+		CheckBuffer.Remove(0, 1);
+	}
 }
 
 
@@ -152,13 +171,19 @@ function CreateServerHint(XComGameState NewGameState, name CheckName)
 	`AMLOG("Hint created: " $ CheckName);
 	
 	Link = Spawn(class'WOTCArchipelago_TcpLink');
-	Link.Call("/Hint/" $ CheckName, HintResponseHandler);
+	Link.Call("/Hint/" $ CheckName, HintResponseHandler, HintErrorHandler);
 }
 
 private final function HintResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
 	Link.Destroy();
 	ClearCheckBuffer();
+}
+
+private final function HintErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
+{
+	`AMLOG("Hint Error Status: " $ Resp.ResponseCode);
+	Link.Destroy();
 }
 
 
@@ -168,7 +193,7 @@ private final function HintResponseHandler(WOTCArchipelago_TcpLink Link, HttpRes
 
 function Update()
 {
-	local WOTCArchipelago_TcpLink Link;
+	local string Path;
 
 	// Handle add item
 	if (AddItemNames.Length > 0) HandleAddItem();
@@ -194,14 +219,14 @@ function Update()
 	// Strategy
 	if (`HQPRES != none)
 	{
-		Link = Spawn(class'WOTCArchipelago_TcpLink');
-		Link.Call("/Tick/Strategy/" $ `APCTRREAD('ItemsReceivedStrategy'), TickStrategyResponseHandler, TickErrorHandler);
+		Path = "/Tick/Strategy/" $ `APCTRREAD('ItemsReceivedStrategy');
+		TickLink.Call(Path, TickStrategyResponseHandler, TickErrorHandler);
 	}
 	// Tactical
 	else
 	{
-		Link = Spawn(class'WOTCArchipelago_TcpLink');
-		Link.Call("/Tick/Tactical/" $ `APCTRREAD('ItemsReceivedTactical'), TickTacticalResponseHandler, TickErrorHandler);
+		Path = "/Tick/Tactical/" $ `APCTRREAD('ItemsReceivedTactical');
+		TickLink.Call(Path, TickTacticalResponseHandler, TickErrorHandler);
 	}
 }
 
@@ -281,23 +306,6 @@ private final function HandleStrongholdUnlock()
 	}
 }
 
-private final function ClearCheckBuffer()
-{
-	local XComGameState		NewGameState;
-	local name				CheckName;
-
-	while (CheckBuffer.Length > 0)
-	{
-		CheckName = CheckBuffer[0];
-
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Re-send check " $ CheckName $ " from buffer");
-		OnCheckReached(NewGameState, CheckName);
-		`GAMERULES.SubmitGameState(NewGameState);
-
-		CheckBuffer.Remove(0, 1);
-	}
-}
-
 private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
 	local array<string>		Messages;
@@ -320,17 +328,14 @@ private final function TickStrategyResponseHandler(WOTCArchipelago_TcpLink Link,
 		if (Message == string(int(Message)))
 		{
 			// Abort if state is mismatched
-			if (int(Message) != `APCTRREAD('ItemsReceivedStrategy'))
-				return;
+			if (int(Message) != `APCTRREAD('ItemsReceivedStrategy')) return;
 			continue;
 		}
 
 		HandleMessage(Message);
-
 		`APCTRINC('ItemsReceivedStrategy');
 	}
 	
-	Link.Destroy();
 	ClearCheckBuffer();
 }
 
@@ -356,25 +361,20 @@ private final function TickTacticalResponseHandler(WOTCArchipelago_TcpLink Link,
 		if (Message == string(int(Message)))
 		{
 			// Abort if state is mismatched
-			if (int(Message) != `APCTRREAD('ItemsReceivedTactical'))
-				return;
+			if (int(Message) != `APCTRREAD('ItemsReceivedTactical')) return;
 			continue;
 		}
 		
 		HandleMessage(Message);
-
 		`APCTRINC('ItemsReceivedTactical');
 	}
 
-	Link.Destroy();
 	ClearCheckBuffer();
 }
 
 private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpResponse Resp)
 {
 	`AMLOG("Tick Error Status: " $ Resp.ResponseCode);
-
-	/* Commented out because it's currently too good at freezing the game
 
 	// Client can not be reached
 	if (Resp.ResponseCode == 408)
@@ -386,9 +386,9 @@ private final function TickErrorHandler(WOTCArchipelago_TcpLink Link, HttpRespon
 	{
 	    RaiseDialog(default.strClientDisconnected, default.strClientDisconnectedDetails);
 	}
-	*/
-	
+
 	Link.Destroy();
+	TickLink = Spawn(class'WOTCArchipelago_TcpLink');
 }
 
 
@@ -661,6 +661,11 @@ static private final function TriggerTrap(XComGameState NewGameState, const name
 	`AMLOG("Triggered trap: " $ TrapName $ " x" $ Quantity);
 }
 
+
+//=======================================================================================
+//                                     COUNTERS
+//---------------------------------------------------------------------------------------
+
 static function int IncrementCounter(const name CounterName, optional XComGameState NewGameState)
 {
 	if (NewGameState != none)
@@ -697,6 +702,11 @@ static function int ReadCounter(const name CounterName)
 {
 	return `XCOMHQ.GetNumItemInInventory(CounterName);
 }
+
+
+//=======================================================================================
+//                                      DIALOG
+//---------------------------------------------------------------------------------------
 
 static private final function RaiseDialog(string Title, string Text)
 {

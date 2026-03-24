@@ -41,7 +41,8 @@ function Call(coerce string RequestPath,
 {
 	local HttpResponse EmptyResponse;
 
-	if (bRequestInProgress) {
+	if (bRequestInProgress)
+	{
         `WARN("[WOTCArchipelago_TcpLink] Same object is being re-used while still in use, which is not allowed");
         return;
     }
@@ -54,7 +55,7 @@ function Call(coerce string RequestPath,
 	OnRequestError = ErrorHandler;
 
 	bIsTickRequest = (Left(Path, 5) == "/Tick");
-	TimeOutDelay = 2.5;
+	TimeOutDelay = 3.0;
 
 	// Reset per-request state
     bIsChunkTransferEncoding = false;
@@ -73,10 +74,13 @@ function Call(coerce string RequestPath,
 
 function TimeOut()
 {
-	`AMLOG("Request Timed Out");
-	Response.ResponseCode = 408;
+	if (bRequestInProgress)
+	{
+		`AMLOG("Request Timed Out");
+		Response.ResponseCode = 408;
 
-	if (OnRequestError != none) OnRequestError(self, Response);
+		if (OnRequestError != none) OnRequestError(self, Response);
+	}
 }
 
 function name GetCheckName()
