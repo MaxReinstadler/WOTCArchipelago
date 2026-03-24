@@ -7,7 +7,7 @@ strClientDisconnectedDetails="Please connect to your slot and restart the game."
 strDisconnectedWarning="Client Disconnected"
 strDisconnectedWarningDetails="Please connect to your slot and restart the game.\nContinuing without doing so may result in unexpected behavior."
 strIncompatibleWarning="Version Incompatible"
-strIncompatibleWarningDetails="This mod version is incompatible with the client version.\nPlease install the appropriate mod version."
+strIncompatibleWarningDetails="This mod version is incompatible with the client version.\nPlease install the appropriate mod version.\nUse the /version command in the XCOM 2 WotC AP Client for more info."
 
 strDoomTrapMessage="Archipelago Trap"
 strDialogAccept="OK"
