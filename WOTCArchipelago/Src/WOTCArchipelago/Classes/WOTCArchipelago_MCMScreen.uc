@@ -11,6 +11,7 @@ var localized string strSettingsPageTitle;
 var localized string strGroupGeneral;
 var localized string strGroupHints;
 var localized string strGroupReducedCampaignDuration;
+var localized string strGroupDeathLink;
 var localized string strGroupTraps;
 
 
@@ -50,6 +51,9 @@ var config string CFG_AP_GEN_ID;
 // Instant rookie training
 `MCM_API_CheckboxVars(INSTANT_ROOKIE_TRAINING);
 
+// Instat SPARK building
+`MCM_API_CheckboxVars(INSTANT_SPARK_BUILDING);
+
 // Disable day 1 traps
 `MCM_API_CheckboxVars(NO_STARTING_TRAPS);
 
@@ -78,6 +82,8 @@ var config int CFG_VERSION;
 
 `MCM_API_CheckboxFns(INSTANT_ROOKIE_TRAINING);
 
+`MCM_API_CheckboxFns(INSTANT_SPARK_BUILDING);
+
 `MCM_API_CheckboxFns(NO_STARTING_TRAPS);
 
 `MCM_API_VersionChecker(VERSION);
@@ -94,6 +100,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     local MCM_API_SettingsGroup GroupGeneral;
 	local MCM_API_SettingsGroup GroupHints;
 	local MCM_API_SettingsGroup GroupDuration;
+	local MCM_API_SettingsGroup GroupDeathLink;
 	local MCM_API_SettingsGroup GroupTraps;
     
 	LoadSavedSettings();
@@ -120,7 +127,10 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AddSlider(GroupDuration, SKIP_RAID_REWARD_MULT_ERR, 0.0f, 1.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, EXTRA_XP_MULT, 0.0f, 2.0f, 0.05f);
 	`MCM_API_AddSlider(GroupDuration, EXTRA_CORPSES, 0, 5, 1);
-	`MCM_API_AddCheckbox(GroupDuration, INSTANT_ROOKIE_TRAINING);
+
+	GroupDeathLink = Page.AddGroup('DeathLink', default.strGroupDeathLink);
+	`MCM_API_AddCheckbox(GroupDeathLink, INSTANT_ROOKIE_TRAINING);
+	`MCM_API_AddCheckbox(GroupDeathLink, INSTANT_SPARK_BUILDING);
 
 	GroupTraps = Page.AddGroup('Traps', default.strGroupTraps);
 	`MCM_API_AddCheckbox(GroupTraps, NO_STARTING_TRAPS);
@@ -151,6 +161,8 @@ simulated function LoadSavedSettings()
 
 	`MCM_API_LoadSetting(INSTANT_ROOKIE_TRAINING);
 
+	`MCM_API_LoadSetting(INSTANT_SPARK_BUILDING);
+
 	`MCM_API_LoadSetting(NO_STARTING_TRAPS);
 }
 
@@ -176,6 +188,8 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 	`MCM_API_RestoreDefault(EXTRA_CORPSES);
 
 	`MCM_API_RestoreDefault(INSTANT_ROOKIE_TRAINING);
+
+	`MCM_API_RestoreDefault(INSTANT_SPARK_BUILDING);
 
 	`MCM_API_RestoreDefault(NO_STARTING_TRAPS);
 }
@@ -225,6 +239,8 @@ static function LoadAndSaveAPDefaults()
 		`MCM_API_LoadAPDefault(EXTRA_CORPSES);
 
 		`MCM_API_LoadAPDefault(INSTANT_ROOKIE_TRAINING);
+
+		`MCM_API_LoadAPDefault(INSTANT_SPARK_BUILDING);
 
 		`MCM_API_LoadAPDefault(NO_STARTING_TRAPS);
 

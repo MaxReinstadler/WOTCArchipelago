@@ -33,6 +33,9 @@ var config int DEF_EXTRA_CORPSES;
 // Instant rookie training
 var config bool DEF_INSTANT_ROOKIE_TRAINING;
 
+// Instant SPARK building
+var config bool DEF_INSTANT_SPARK_BUILDING;
+
 // Disable day 1 traps
 var config bool DEF_NO_STARTING_TRAPS;
 

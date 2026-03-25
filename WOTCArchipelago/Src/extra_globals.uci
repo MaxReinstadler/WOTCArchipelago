@@ -12,3 +12,4 @@
 `define APCTRREAD(Ctr) class'WOTCArchipelago_APClient'.static.ReadCounter(`Ctr)
 
 `define APCFG(Var) class'WOTCArchipelago_MCMScreen'.static.get`{Var} ()
+`define APCFGFN(Var) class'WOTCArchipelago_MCMScreen'.static.get`{Var}
