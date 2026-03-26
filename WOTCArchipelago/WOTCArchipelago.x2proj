@@ -48,6 +48,9 @@
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_Spoiler.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_StringHelpers.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTCArchipelago\Classes\WOTCArchipelago_UISL_PG.uc">
       <SubType>Content</SubType>
     </Content>

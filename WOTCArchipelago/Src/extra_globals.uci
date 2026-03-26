@@ -15,3 +15,5 @@
 
 `define APCFG(Var) class'WOTCArchipelago_MCMScreen'.static.get`{Var} ()
 `define APCFGFN(Var) class'WOTCArchipelago_MCMScreen'.static.get`{Var}
+
+`define APUNITINFO(Str, Unit) class'WOTCArchipelago_StringHelpers'.static.InsertUnitInfo(`Str, `Unit)

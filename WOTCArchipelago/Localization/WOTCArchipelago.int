@@ -1,3 +1,13 @@
+[WOTCArchipelago_StringHelpers]
+strFirstName="{FirstName}"
+strLastName="{LastName}"
+strNickName="{NickName}"
+strRankFullName="{RankFullName}"
+strFullName="{FullName}"
+strRankName="{RankName}"
+strRankLastName="{RankLastName}"
+strFullNickName="{FullNickName}"
+
 [WOTCArchipelago_APClient]
 strRequestTimedOut="Request Timed Out"
 strRequestTimedOutDetails="Please connect to your slot and restart the game."
@@ -52,10 +62,16 @@ INSTANT_ROOKIE_TRAINING_LABEL="Instant Rookie Training"
 INSTANT_ROOKIE_TRAINING_DESC="Training rookies in the GTS is instant."
 INSTANT_SPARK_BUILDING_LABEL="Instant SPARK Building"
 INSTANT_SPARK_BUILDING_DESC="Building SPARKs in the Proving Ground is instant."
+REFUND_SPARK_COST_LABEL="Refund SPARK Cost"
+REFUND_SPARK_COST_DESC="SPARKs refund their cost when they are destroyed."
 
 strGroupTraps="Traps"
 NO_STARTING_TRAPS_LABEL="Disable Day One Traps"
 NO_STARTING_TRAPS_DESC="Traps have no effect when received on the first day of a campaign."
+
+[X2EventListener_WOTCArchipelago]
+strSparkCostRefunded="SPARK Cost Refunded"
+strSparkCostRefundedDetails="{FullName} was destroyed, cost refunded."
 
 [X2StrategyElement_OverrideMissionSources]
 strSkippedSupplyRaid="Skipped Supply Raid"

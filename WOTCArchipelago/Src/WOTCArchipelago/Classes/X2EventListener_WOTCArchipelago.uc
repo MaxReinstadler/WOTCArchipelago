@@ -6,9 +6,17 @@ struct native CustomGroup
 	var array<name>		Members;
 };
 
-var config array<name>				CheckKillDefaultCharacterGroups;
-var config array<CustomGroup>		CheckKillCustomCharacterGroups;
-var config array<name>				CheckKillIgnoreDefaultGroup;
+var config array<name>			CheckKillDefaultCharacterGroups;
+var config array<CustomGroup>	CheckKillCustomCharacterGroups;
+var config array<name>			CheckKillIgnoreDefaultGroup;
+
+var config int RefundSparkCostSupplies;
+var config int RefundSparkCostAlloys;
+var config int RefundSparkCostElerium;
+var config int RefundSparkCostCores;
+
+var localized string strSparkCostRefunded;
+var localized string strSparkCostRefundedDetails;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -47,6 +55,8 @@ static protected function EventListenerReturn OnUnitDied(Object EventData, Objec
 
 	if (UnitState.GetTeam() == eTeam_Alien || UnitState.GetTeam() == eTeam_TheLost)
 		OnEnemyDied(NewGameState, UnitState);
+	else if (UnitState.GetTeam() == eTeam_XCom && UnitState.GetMyTemplateName() == 'SparkSoldier')
+		RefundSparkCost(NewGameState, UnitState);
 
 	return ELR_NoInterrupt;
 }
@@ -135,6 +145,26 @@ static private function GiveExtraCorpses(XComGameState NewGameState, XComGameSta
 			for (Num = 0; Num < `APCFG(EXTRA_CORPSES); Num++)
 				BattleData.AutoLootBucket.AddItem(LootTemplateName);
 		}
+	}
+}
+
+static private function RefundSparkCost(XComGameState NewGameState, XComGameState_Unit UnitState)
+{
+	local SeqAct_ShowDramaticMessage SeqActShowDramaticMessage;
+
+	if (`APCFG(REFUND_SPARK_COST))
+	{
+		`APADDITEM(NewGameState, 'Supplies', default.RefundSparkCostSupplies);
+		`APADDITEM(NewGameState, 'AlienAlloy', default.RefundSparkCostAlloys);
+		`APADDITEM(NewGameState, 'EleriumDust', default.RefundSparkCostElerium);
+		`APADDITEM(NewGameState, 'EleriumCore', default.RefundSparkCostCores);
+
+		SeqActShowDramaticMessage = new class'SeqAct_ShowDramaticMessage';
+		SeqActShowDramaticMessage.Title = class'WOTCArchipelago_APClient'.default.strDramaticMessageTitle;
+		SeqActShowDramaticMessage.Message1 = default.strSparkCostRefunded;
+		SeqActShowDramaticMessage.Message2 = `APUNITINFO(default.strSparkCostRefundedDetails, UnitState);
+		SeqActShowDramaticMessage.MessageColor = eUIState_Normal;
+		SeqActShowDramaticMessage.BuildVisualization(NewGameState);
 	}
 }
 

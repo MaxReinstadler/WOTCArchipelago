@@ -36,6 +36,9 @@ var config bool DEF_INSTANT_ROOKIE_TRAINING;
 // Instant SPARK building
 var config bool DEF_INSTANT_SPARK_BUILDING;
 
+// Refund SPARK cost
+var config bool DEF_REFUND_SPARK_COST;
+
 // Disable day 1 traps
 var config bool DEF_NO_STARTING_TRAPS;
 
