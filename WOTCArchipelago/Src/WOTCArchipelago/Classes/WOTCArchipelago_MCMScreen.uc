@@ -42,19 +42,13 @@ var config string CFG_AP_GEN_ID;
 `MCM_API_SliderVars(SKIP_RAID_REWARD_MULT_BASE, float);
 `MCM_API_SliderVars(SKIP_RAID_REWARD_MULT_ERR, float);
 
-// Increase XP gain
+// Increase XP/corpse gain
 `MCM_API_SliderVars(EXTRA_XP_MULT, float);
-
-// Increase corpse gain
 `MCM_API_SliderVars(EXTRA_CORPSES, int);
 
-// Instant rookie training
+// Improve access to soldiers
 `MCM_API_CheckboxVars(INSTANT_ROOKIE_TRAINING);
-
-// Instant SPARK building
 `MCM_API_CheckboxVars(INSTANT_SPARK_BUILDING);
-
-// Refund SPARK cost
 `MCM_API_CheckboxVars(REFUND_SPARK_COST);
 
 // Disable day 1 traps
@@ -80,13 +74,10 @@ var config int CFG_VERSION;
 `MCM_API_SliderFns(SKIP_RAID_REWARD_MULT_ERR, float);
 
 `MCM_API_SliderFns(EXTRA_XP_MULT, float);
-
 `MCM_API_SliderFns(EXTRA_CORPSES, int);
 
 `MCM_API_CheckboxFns(INSTANT_ROOKIE_TRAINING);
-
 `MCM_API_CheckboxFns(INSTANT_SPARK_BUILDING);
-
 `MCM_API_CheckboxFns(REFUND_SPARK_COST);
 
 `MCM_API_CheckboxFns(NO_STARTING_TRAPS);
@@ -162,13 +153,10 @@ simulated function LoadSavedSettings()
 	`MCM_API_LoadSetting(SKIP_RAID_REWARD_MULT_ERR);
 
 	`MCM_API_LoadSetting(EXTRA_XP_MULT);
-
 	`MCM_API_LoadSetting(EXTRA_CORPSES);
 
 	`MCM_API_LoadSetting(INSTANT_ROOKIE_TRAINING);
-
 	`MCM_API_LoadSetting(INSTANT_SPARK_BUILDING);
-
 	`MCM_API_LoadSetting(REFUND_SPARK_COST);
 
 	`MCM_API_LoadSetting(NO_STARTING_TRAPS);
@@ -192,13 +180,10 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 	`MCM_API_RestoreDefault(SKIP_RAID_REWARD_MULT_ERR);
 
 	`MCM_API_RestoreDefault(EXTRA_XP_MULT);
-
 	`MCM_API_RestoreDefault(EXTRA_CORPSES);
 
 	`MCM_API_RestoreDefault(INSTANT_ROOKIE_TRAINING);
-
 	`MCM_API_RestoreDefault(INSTANT_SPARK_BUILDING);
-
 	`MCM_API_RestoreDefault(REFUND_SPARK_COST);
 
 	`MCM_API_RestoreDefault(NO_STARTING_TRAPS);
@@ -245,13 +230,10 @@ static function LoadAndSaveAPDefaults()
 		`MCM_API_LoadAPDefault(SKIP_RAID_REWARD_MULT_ERR);
 
 		`MCM_API_LoadAPDefault(EXTRA_XP_MULT);
-
 		`MCM_API_LoadAPDefault(EXTRA_CORPSES);
 
 		`MCM_API_LoadAPDefault(INSTANT_ROOKIE_TRAINING);
-
 		`MCM_API_LoadAPDefault(INSTANT_SPARK_BUILDING);
-
 		`MCM_API_LoadAPDefault(REFUND_SPARK_COST);
 
 		`MCM_API_LoadAPDefault(NO_STARTING_TRAPS);

@@ -24,19 +24,13 @@ var config bool DEF_DISABLE_CAPTURE_RISK;
 var config float DEF_SKIP_RAID_REWARD_MULT_BASE;
 var config float DEF_SKIP_RAID_REWARD_MULT_ERR;
 
-// Increase XP gain
+// Increase XP/corpse gain
 var config float DEF_EXTRA_XP_MULT;
-
-// Increase corpse gain
 var config int DEF_EXTRA_CORPSES;
 
-// Instant rookie training
+// Improve access to soldiers
 var config bool DEF_INSTANT_ROOKIE_TRAINING;
-
-// Instant SPARK building
 var config bool DEF_INSTANT_SPARK_BUILDING;
-
-// Refund SPARK cost
 var config bool DEF_REFUND_SPARK_COST;
 
 // Disable day 1 traps
