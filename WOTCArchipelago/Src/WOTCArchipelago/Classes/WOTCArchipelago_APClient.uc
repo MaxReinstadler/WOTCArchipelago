@@ -470,7 +470,7 @@ private final function HandleMessage(string Message)
 	RaiseDialog(Lines[1], Lines[2]);
 }
 
-static private final function AddItemToHQInventory(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
+static final function AddItemToHQInventory(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
 {
     local XComGameState_HeadquartersXCom	XComHQ;
 	local X2ItemTemplateManager             ItemMgr;
@@ -495,7 +495,7 @@ static private final function AddItemToHQInventory(XComGameState NewGameState, c
 	`AMLOG("Added item to HQ inventory: " $ TemplateName $ " x" $ Quantity);
 }
 
-static private final function RemoveItemFromHQInventory(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
+static final function RemoveItemFromHQInventory(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)
 {
 	local XComGameState_HeadquartersXCom	XComHQ;
 	local XComGameState_Item				ItemState;
