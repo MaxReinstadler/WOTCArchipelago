@@ -50,6 +50,7 @@ var config string CFG_AP_GEN_ID;
 `MCM_API_CheckboxVars(INSTANT_ROOKIE_TRAINING);
 `MCM_API_CheckboxVars(INSTANT_SPARK_BUILDING);
 `MCM_API_CheckboxVars(REFUND_SPARK_COST);
+`MCM_API_CheckboxVars(REPLACE_FACTION_HERO);
 
 // Disable day 1 traps
 `MCM_API_CheckboxVars(NO_STARTING_TRAPS);
@@ -79,6 +80,7 @@ var config int CFG_VERSION;
 `MCM_API_CheckboxFns(INSTANT_ROOKIE_TRAINING);
 `MCM_API_CheckboxFns(INSTANT_SPARK_BUILDING);
 `MCM_API_CheckboxFns(REFUND_SPARK_COST);
+`MCM_API_CheckboxFns(REPLACE_FACTION_HERO);
 
 `MCM_API_CheckboxFns(NO_STARTING_TRAPS);
 
@@ -128,6 +130,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AddCheckbox(GroupDeathLink, INSTANT_ROOKIE_TRAINING);
 	`MCM_API_AddCheckbox(GroupDeathLink, INSTANT_SPARK_BUILDING);
 	`MCM_API_AddCheckbox(GroupDeathLink, REFUND_SPARK_COST);
+	`MCM_API_AddCheckbox(GroupDeathLink, REPLACE_FACTION_HERO);
 
 	GroupTraps = Page.AddGroup('Traps', default.strGroupTraps);
 	`MCM_API_AddCheckbox(GroupTraps, NO_STARTING_TRAPS);
@@ -158,6 +161,7 @@ simulated function LoadSavedSettings()
 	`MCM_API_LoadSetting(INSTANT_ROOKIE_TRAINING);
 	`MCM_API_LoadSetting(INSTANT_SPARK_BUILDING);
 	`MCM_API_LoadSetting(REFUND_SPARK_COST);
+	`MCM_API_LoadSetting(REPLACE_FACTION_HERO);
 
 	`MCM_API_LoadSetting(NO_STARTING_TRAPS);
 }
@@ -185,6 +189,7 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 	`MCM_API_RestoreDefault(INSTANT_ROOKIE_TRAINING);
 	`MCM_API_RestoreDefault(INSTANT_SPARK_BUILDING);
 	`MCM_API_RestoreDefault(REFUND_SPARK_COST);
+	`MCM_API_RestoreDefault(REPLACE_FACTION_HERO);
 
 	`MCM_API_RestoreDefault(NO_STARTING_TRAPS);
 }
@@ -235,6 +240,7 @@ static function LoadAndSaveAPDefaults()
 		`MCM_API_LoadAPDefault(INSTANT_ROOKIE_TRAINING);
 		`MCM_API_LoadAPDefault(INSTANT_SPARK_BUILDING);
 		`MCM_API_LoadAPDefault(REFUND_SPARK_COST);
+		`MCM_API_LoadAPDefault(REPLACE_FACTION_HERO);
 
 		`MCM_API_LoadAPDefault(NO_STARTING_TRAPS);
 

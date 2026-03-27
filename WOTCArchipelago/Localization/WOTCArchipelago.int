@@ -64,6 +64,8 @@ INSTANT_SPARK_BUILDING_LABEL="Instant SPARK Building"
 INSTANT_SPARK_BUILDING_DESC="Building SPARKs in the Proving Ground is instant."
 REFUND_SPARK_COST_LABEL="Refund SPARK Cost"
 REFUND_SPARK_COST_DESC="SPARKs refund their cost when they are destroyed."
+REPLACE_FACTION_HERO_LABEL="Replace Faction Heroes"
+REPLACE_FACTION_HERO_DESC="Gain automatic replacements for dead or missing faction heroes."
 
 strGroupTraps="Traps"
 NO_STARTING_TRAPS_LABEL="Disable Day One Traps"

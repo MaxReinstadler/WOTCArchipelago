@@ -210,11 +210,9 @@ function Update()
 	if (SinceLastTick < 25) return;
 	SinceLastTick = 0;
 
-	// Handle objective completion
 	HandleObjectiveCompletion();
-
-	// Handle chosen stronghold unlock
 	HandleStrongholdUnlock();
+	HandleReplaceFactionHero();
 	
 	// Strategy
 	if (`HQPRES != none)
@@ -302,6 +300,49 @@ private final function HandleStrongholdUnlock()
 				UnlockChosenStronghold(ChosenState);
 				`APCTRDEC('WarlockStrongholdReceived');
 			}
+		}
+	}
+}
+
+private final function HandleReplaceFactionHero()
+{
+	local XComGameStateHistory				History;
+	local XComGameState_HeadquartersXCom	XComHQ;
+	local XComGameState_ResistanceFaction	FactionState;
+	local bool								bSoldierPresent;
+	local name								CharacterClass;
+	local StateObjectReference				UnitRef;
+	local XComGameState_Unit				UnitState;
+	local XComGameState						NewGameState;
+
+	if (!`APCFG(REPLACE_FACTION_HERO)) return;
+
+	History = `XCOMHISTORY;
+	XComHQ = XComGameState_HeadquartersXCom(History.GetGameStateForObjectID(`XCOMHQ.ObjectID));
+
+	foreach History.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
+	{
+		if (!FactionState.bMetXCom) continue;
+			
+		bSoldierPresent = false;
+		CharacterClass = FactionState.GetMyTemplate().ChampionCharacterClass;
+
+		foreach XcomHQ.Crew(UnitRef)
+		{
+			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+
+			if (UnitState.GetMyTemplateName() == CharacterClass)
+			{
+				bSoldierPresent = true;
+				break;
+			}
+		}
+
+		if (!bSoldierPresent)
+		{
+			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Replace faction hero");
+			AddStaffToHQCrew(NewGameState, CharacterClass);
+			`GAMERULES.SubmitGameState(NewGameState);
 		}
 	}
 }

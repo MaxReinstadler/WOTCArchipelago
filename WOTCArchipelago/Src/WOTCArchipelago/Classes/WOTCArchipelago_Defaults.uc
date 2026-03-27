@@ -32,6 +32,7 @@ var config int DEF_EXTRA_CORPSES;
 var config bool DEF_INSTANT_ROOKIE_TRAINING;
 var config bool DEF_INSTANT_SPARK_BUILDING;
 var config bool DEF_REFUND_SPARK_COST;
+var config bool DEF_REPLACE_FACTION_HERO;
 
 // Disable day 1 traps
 var config bool DEF_NO_STARTING_TRAPS;
