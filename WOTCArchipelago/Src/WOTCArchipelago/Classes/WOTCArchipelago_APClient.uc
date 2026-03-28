@@ -318,7 +318,7 @@ private final function HandleReplaceFactionHero()
 	if (!`APCFG(REPLACE_FACTION_HERO)) return;
 
 	History = `XCOMHISTORY;
-	XComHQ = XComGameState_HeadquartersXCom(History.GetGameStateForObjectID(`XCOMHQ.ObjectID));
+	XComHQ = `XCOMHQ;
 
 	foreach History.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{
@@ -327,7 +327,7 @@ private final function HandleReplaceFactionHero()
 		bSoldierPresent = false;
 		CharacterClass = FactionState.GetMyTemplate().ChampionCharacterClass;
 
-		foreach XcomHQ.Crew(UnitRef)
+		foreach XComHQ.Crew(UnitRef)
 		{
 			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
 
