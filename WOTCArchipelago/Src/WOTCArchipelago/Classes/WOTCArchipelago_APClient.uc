@@ -563,7 +563,6 @@ static private final function GiveCovertActionReward(XComGameState NewGameState,
 	else if (RewardName == 'AssassinStronghold') `APCTRINC('AssassinStrongholdReceived', NewGameState);
 	else if (RewardName == 'HunterStronghold') `APCTRINC('HunterStrongholdReceived', NewGameState);
 	else if (RewardName == 'WarlockStronghold') `APCTRINC('WarlockStrongholdReceived', NewGameState);
-	else if (RewardName == 'DefaultChosenHuntReward') GiveDefaultChosenHuntReward(NewGameState);
 }
 
 static private final function RaiseFactionInfluence(XComGameState NewGameState, optional XComGameState_ResistanceFaction FactionState)
@@ -611,38 +610,6 @@ static private final function UnlockChosenStronghold(XComGameState_AdventChosen 
 	`GAMERULES.SubmitGameState(NewGameState);
 
 	`AMLOG("Unlocked stronghold of " $ ChosenState.GetMyTemplateName());
-}
-
-static private final function GiveDefaultChosenHuntReward(XComGameState NewGameState)
-{
-	local XComGameState_ResistanceFaction	FactionState;
-	local name								ReceivedCounterName;
-
-	class'X2Item_APCounterResources'.static.GetRecentCheckedChosenHuntFaction(FactionState, ReceivedCounterName);
-
-	if (FactionState.Influence == eFactionInfluence_Minimal || FactionState.Influence == eFactionInfluence_Respected)
-	{
-		RaiseFactionInfluence(NewGameState, FactionState);
-		`APCTRINC(ReceivedCounterName, NewGameState);
-	}
-	else if (FactionState.Influence == eFactionInfluence_Influential)
-	{
-		switch (FactionState.GetRivalChosen().GetMyTemplateName())
-		{
-			case 'Chosen_Assassin':
-				`APCTRINC('AssassinStrongholdReceived', NewGameState);
-				`APCTRINC(ReceivedCounterName, NewGameState);
-				break;
-			case 'Chosen_Hunter':
-				`APCTRINC('HunterStrongholdReceived', NewGameState);
-				`APCTRINC(ReceivedCounterName, NewGameState);
-				break;
-			case 'Chosen_Warlock':
-				`APCTRINC('WarlockStrongholdReceived', NewGameState);
-				`APCTRINC(ReceivedCounterName, NewGameState);
-				break;
-		}
-	}
 }
 
 static private final function AddStaffToHQCrew(XComGameState NewGameState, const name TemplateName, optional int Quantity = 1)

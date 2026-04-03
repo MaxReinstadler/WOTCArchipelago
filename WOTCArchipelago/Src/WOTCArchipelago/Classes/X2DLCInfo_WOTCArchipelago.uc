@@ -68,9 +68,12 @@ static event OnPostTemplatesCreated()
 
 	// CHOSEN HUNTSANITY
 
-	// Patch chosen hunt covert action templates to alter rewards
-	`AMLOG("Patching Covert Op Templates");
-	IterateTemplatesAllDiff(class'X2CovertActionTemplate', PatchCovertActionTemplates);
+	if (class'WOTCArchipelago_Spoiler'.static.IsChosenHuntsanityActive())
+	{
+		// Patch chosen hunt covert action templates to alter rewards
+		`AMLOG("Patching Covert Op Templates");
+		IterateTemplatesAllDiff(class'X2CovertActionTemplate', PatchCovertActionTemplates);
+	}
 
 	// ITEMSANITY
 

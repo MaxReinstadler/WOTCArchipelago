@@ -13,11 +13,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	APCounterItems.AddItem(CreateCounterTemplate('SkirmisherChosenHuntChecked'));
 	APCounterItems.AddItem(CreateCounterTemplate('TemplarChosenHuntChecked'));
 
-	// Chosen Hunt Covert Action Unlocks Received
-	APCounterItems.AddItem(CreateCounterTemplate('ReaperChosenHuntReceived'));
-	APCounterItems.AddItem(CreateCounterTemplate('SkirmisherChosenHuntReceived'));
-	APCounterItems.AddItem(CreateCounterTemplate('TemplarChosenHuntReceived'));
-
 	// Chosen Stronghold Unlocks Received
 	APCounterItems.AddItem(CreateCounterTemplate('AssassinStrongholdReceived'));
 	APCounterItems.AddItem(CreateCounterTemplate('HunterStrongholdReceived'));
@@ -86,32 +81,6 @@ static function GetRecentCompletedChosenHuntFaction(out XComGameState_Resistance
 			case 'Faction_Templars':
 				CheckedCounterName = 'TemplarChosenHuntChecked';
 				if (`APCTRREAD(CheckedCounterName) < NumTemplarChosenHuntCompleted) return;
-				break;
-		}
-	}
-
-	// No chosen hunt covert action
-	FactionState = none;
-}
-
-// Get faction of most recently checked (and not received) chosen hunt covert op
-static function GetRecentCheckedChosenHuntFaction(out XComGameState_ResistanceFaction FactionState, out name ReceivedCounterName)
-{
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
-	{
-		switch (FactionState.GetMyTemplateName())
-		{
-			case 'Faction_Reapers':
-				ReceivedCounterName = 'ReaperChosenHuntReceived';
-				if (`APCTRREAD(ReceivedCounterName) < `APCTRREAD('ReaperChosenHuntChecked')) return;
-				break;
-			case 'Faction_Skirmishers':
-				ReceivedCounterName = 'SkirmisherChosenHuntReceived';
-				if (`APCTRREAD(ReceivedCounterName) < `APCTRREAD('SkirmisherChosenHuntChecked')) return;
-				break;
-			case 'Faction_Templars':
-				ReceivedCounterName = 'TemplarChosenHuntReceived';
-				if (`APCTRREAD(ReceivedCounterName) < `APCTRREAD('TemplarChosenHuntChecked')) return;
 				break;
 		}
 	}
