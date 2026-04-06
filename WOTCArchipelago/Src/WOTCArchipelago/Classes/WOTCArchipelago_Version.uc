@@ -4,6 +4,7 @@ var config string ModVersion;
 var config string MinimumClientVersion;
 var config string ClientVersion;
 var config string MinimumModVersion;
+var config string WorldVersion;
 
 static function string GetModVersion()
 {
@@ -36,7 +37,7 @@ static function bool IsVersionValid(string Version, string MinimumVersion)
 
 static function bool CheckVersion(optional bool bDebug = true)
 {
-	if (bDebug) `AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion);
+	if (bDebug) `AMLOG(GetModVersion() $ " / Client " $ default.ClientVersion $ " / World " $ default.WorldVersion);
 
 	if (!CanCheckVersion())
 	{
