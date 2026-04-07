@@ -367,6 +367,14 @@ static private function PatchProvingGroundTemplates(X2DataTemplate DataTemplate)
 		bPatched = true;
 	}
 
+	// Remove science requirement
+	if (default.bRemoveScienceRequirements && bPatched && TechTemplate.Requirements.RequiredScienceScore < 99999)
+		TechTemplate.Requirements.RequiredScienceScore = 0;
+
+	// Remove engineering requirement
+	if (default.bRemoveEngineeringRequirements && bPatched && TechTemplate.Requirements.RequiredEngineeringScore < 99999)
+		TechTemplate.Requirements.RequiredEngineeringScore = 0;
+
 	if (bPatched) `AMLOG("Patched " $ TechTemplate.Name);
 }
 
