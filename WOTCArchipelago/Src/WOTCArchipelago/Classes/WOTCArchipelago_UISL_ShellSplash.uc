@@ -1,7 +1,9 @@
 // See the Community Highlander's X2WOTCCH_UIScreenListener_ShellSplash.uc
-class WOTCArchipelago_UISL_ShellSplash extends UIScreenListener;
+class WOTCArchipelago_UISL_ShellSplash extends UIScreenListener config(WOTCArchipelago);
 
 var bool bShowedWarningPopup;
+
+var config bool bAllowInvalidLaunch;
 
 event OnInit(UIScreen Screen)
 {
@@ -45,7 +47,7 @@ private function RealizeVersionText(UIShell ShellScreen)
 
 private function ShowWarningPopup(UIShell ShellScreen)
 {
-	if (bShowedWarningPopup) return;
+	if (bShowedWarningPopup && default.bAllowInvalidLaunch) return;
 
 	if (!class'WOTCArchipelago_Version'.static.CanCheckVersion())
 		RealizeDisconnectedPopup(ShellScreen);
