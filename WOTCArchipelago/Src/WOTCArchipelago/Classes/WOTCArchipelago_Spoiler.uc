@@ -43,9 +43,6 @@ static function bool IsChosenHuntsanityActive()
 {
 	local SpoilerEntry Entry;
 
-	`AMLOG("ChosenHuntPt1:1");
-	`AMLOG(name("ChosenHuntPt1:1"));
-
 	return GetSpoilerEntryByLocation(name("ChosenHuntPt1:1"), Entry);
 }
 
